@@ -26,7 +26,6 @@ contract Keystore {
         require(verify(leaves[nextAvailableIndex], proof), "Invalid proof");
         // compute the hash of the new public key
         bytes32 newPubKeyHash = keccak256(abi.encodePacked(newPubKeyX, newPubKeyY));
-        // compute onchain hash which should be the hash of the 32 byte index and a 32 byte 0 value
         bytes32 newHash =
             keccak256(abi.encodePacked(keccak256(abi.encodePacked(bytes32(nextAvailableIndex), newPubKeyHash))));
         leaves[nextAvailableIndex] = newHash;
