@@ -1,16 +1,22 @@
 import { MerkleTree } from 'merkletreejs';
 import { concat, keccak256, toHex } from 'viem';
 
-const main = async () => {
+export const generateZeroLeaves = (): `0x${string}`[] => {
   let leaves: `0x${string}`[] = []
   for (let i = 0; i < 8; i++) {
-    // leaf index is a 32 byte hex string padded with 0s and representing i
-    const leafIndex = toHex(i, { size: 32 });
-    const leafPublicKeyHash = toHex(0, { size: 32 });
-    leaves.push(keccak256(concat([leafPublicKeyHash, leafIndex])) as `0x${string}`);
+    const leaf = generateLeaf(i, new Uint8Array(32), new Uint8Array(32));
+    leaves.push(leaf);
   }
- 
-  console.log('Leaves', leaves);
+  return leaves;
+}
+
+export const generateLeaf = (index: number, pubKeyX: Uint8Array, pubKeyY: Uint8Array): `0x${string}` => {
+  const leafIndex = toHex(index, { size: 32 });
+  const leafPublicKeyHash = keccak256(concat([pubKeyX, pubKeyY]));
+  return keccak256(concat([leafPublicKeyHash, leafIndex])) as `0x${string}`;
+}
+
+export const generateMerkleTree = (leaves: `0x${string}`[]): MerkleTree => {
   const tree = new MerkleTree(
     leaves,
     keccak256,
@@ -18,9 +24,5 @@ const main = async () => {
       hashLeaves: true,
     },
   );
-  const root = tree.getRoot().toString('hex');
-  tree.print();
-  console.log('root', root, tree.getDepth());
-};
-
-main();
+  return tree;
+}

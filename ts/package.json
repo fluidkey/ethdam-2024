@@ -17,7 +17,8 @@
   "dependencies": {
     "@noble/secp256k1": "^1.7.1",
     "@openzeppelin/merkle-tree": "^1.0.6",
-    "viem": "^2.9.16",
-    "merkletreejs": "0.3.11"
+    "@types/node": "^20.12.7",
+    "merkletreejs": "0.3.11",
+    "viem": "^2.9.16"
   }
 }
