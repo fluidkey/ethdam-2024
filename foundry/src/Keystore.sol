@@ -39,6 +39,10 @@ contract Keystore {
         return (newHash, rootHash);
     }
 
+    function getLeaf(uint256 index) public view returns (bytes32) {
+        return leaves[index];
+    }
+
     // if the current leaf publickey has signed a message authorizing the change
     // index, new pk, signed message
 }
