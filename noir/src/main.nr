@@ -24,7 +24,10 @@ fn main(
 
     // verify that from publick_key + index we get up to root following the path
     let pub_key_hash = std::hash::keccak256(concat_uint256_array(pub_key_x, pub_key_y), 64);
-    let leaf = std::hash::keccak256(concat_uint256_array(pub_key_hash, ks_index), 64);
+    let leaf = std::hash::keccak256(
+        std::hash::keccak256(concat_uint256_array(pub_key_hash, ks_index), 64),
+        32
+    );
     assert(eval_merkle_root_4_levels(leaf, proofs) == merkle_state_root);
 }
 
