@@ -1,15 +1,44 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.13;
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol"
 
 contract Keystore {
-    uint256 public number;
+    bytes32 public root;
+    bytes32[] public leaves;
+    uint256 public nextAvailableIndex = 0;
 
-    function setNumber(uint256 newNumber) public {
-        number = newNumber;
+    constructor(bytes32 _root, bytes32[] memory _leaves) {
+        root = _root;
+        leaves = _leaves;
     }
 
-    function increment() public {
-        number++;
+    function verify(bytes32 leaf, bytes32[] memory proof) public view returns (bool) {
+        bytes32 computedHash = leaf;
+        for (uint256 i = 0; i < proof.length; i++) {
+            computedHash = keccak256(abi.encodePacked(computedHash, proof[i]));
+        }
+        return (computedHash == root);
     }
+
+    // allow to update a leaf if it is bytes32(0)
+    function addKey(bytes32[] memory proof, bytes32 newPubKeyX, bytes32 newPubKeyY) public returns (bytes32, bytes32) {
+        // verify the proofs are valid
+        require(nextAvailableIndex < 8, "No more space");
+        require(verify(leaves[nextAvailableIndex], proof), "Invalid proof");
+        // compute the hash of the new public key
+        bytes32 newPubKeyHash = keccak256(abi.encodePacked(newPubKeyX, newPubKeyY));
+        // compute onchain hash which should be the hash of the 32 byte index and a 32 byte 0 value
+        bytes32 newHash =
+            keccak256(abi.encodePacked(keccak256(abi.encodePacked(bytes32(nextAvailableIndex), newPubKeyHash))));
+        leaves[nextAvailableIndex] = newHash;
+        nextAvailableIndex++;
+        // compute the new root hash
+        bytes32 rootHash = newHash;
+        for (uint256 i = 0; i < proof.length; i++) {
+            rootHash = keccak256(abi.encodePacked(rootHash, proof[i]));
+        }
+        return (newHash, rootHash);
+    }
+
+    // if the current leaf publickey has signed a message authorizing the change
+    // index, new pk, signed message
 }
