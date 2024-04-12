@@ -33,7 +33,18 @@ export const createViemWalletClient = async () => {
 
 export const handler = async (event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResultV2> => {
   console.log('Hello from backend-relayer');
-  console.log(JSON.stringify(event));
+  console.log('Event', JSON.stringify(event));
+  const body = !!event.body ? JSON.parse(event.body) : {};
+  console.log('Body', JSON.stringify(body));
+  assert(!!body.txData, 'txData must be provided');
+  assert(!!body.to, 'to must be provided');
+  const viemWalletClient = await createViemWalletClient();
+  const { txData, to } = body;
+  const tx = await viemWalletClient.sendTransaction({
+    to: to,
+    data: txData,
+  });
+  console.log('Transaction', tx);
   return {
     statusCode: 200,
     body: JSON.stringify({
