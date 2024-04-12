@@ -1,16 +1,21 @@
 import { MerkleTree } from 'merkletreejs';
-import { keccak256, toBytes } from 'viem';
+import { concat, keccak256, toHex } from 'viem';
 
 const main = async () => {
-  // const leaves = ['0', '1', '2', '3', '4', '5', '6', '7'].map(x => keccak256(toBytes(x)));
-  const leaves = ['0x00', '0x00', '0x00', '0x00', '0x00', '0x00', '0x00', '0x00'].map(x => keccak256(toBytes(x)));
+  let leaves: `0x${string}`[] = []
+  for (let i = 0; i < 8; i++) {
+    // leaf index is a 32 byte hex string padded with 0s and representing i
+    const leafIndex = toHex(i, { size: 32 });
+    const leafPublicKeyHash = toHex(0, { size: 32 });
+    leaves.push(keccak256(concat([leafPublicKeyHash, leafIndex])) as `0x${string}`);
+  }
+ 
   console.log('Leaves', leaves);
   const tree = new MerkleTree(
     leaves,
     keccak256,
     {
       hashLeaves: true,
-      complete: true,
     },
   );
   const root = tree.getRoot().toString('hex');
