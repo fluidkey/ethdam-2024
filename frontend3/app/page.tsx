@@ -5,13 +5,17 @@ import SetSpendingKeys from "@/components/logic/SetSpendingKeys";
 import { useEffect } from 'react';
 import { registerNewKey } from '@/components/actions/registerNewKey';
 import ApproveTransaction from "@/components/logic/ApproveTransaction";
+import { generateStealthZkSafe } from '@/components/actions/generateStealthZkSafe';
 
 export default function Home() {
 
   const go = async () => {
-    const pKey = '0x514213855d6cf975ba1d970225f90846b521b4f57df7d76303890152cc6cf34e';
+    // const pKey = '0x514213855d6cf975ba1d970225f90846b521b4f57df7d76303890152cc6cf34e';
+    // void (async () => {
+    //   await registerNewKey(pKey);
+    // })().catch(e => console.error(e));
     void (async () => {
-      await registerNewKey(pKey);
+      console.log(await generateStealthZkSafe(0));
     })().catch(e => console.error(e));
   };
 
