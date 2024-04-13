@@ -11,6 +11,14 @@ It has an AWS Lambda Function with a function URL configured to be called using 
 }
 ```
 
+The response of the endpoint is the following:
+
+```json
+{
+  "txHash": "0x...", // the txHash published on-chain
+  "receipt": "the receipt received after the tx has been included in the chain" 
+}
+```
 # Development
 
 To develop this microservice, you need to create an `.env` file with the following parameters:

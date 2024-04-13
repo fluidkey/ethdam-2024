@@ -2,7 +2,7 @@ import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from 'aws-lambda';
 import assert from 'assert';
 import { privateKeyToAccount } from 'viem/accounts';
 import { base } from 'viem/chains';
-import { createWalletClient, fallback, http, webSocket } from 'viem';
+import { createPublicClient, createWalletClient, fallback, http, webSocket } from 'viem';
 
 const relayerPrivateKey: string | undefined = process.env.RELAYER_PRIVATE_KEY;
 const baseHttpsUrl: string | undefined = process.env.BASE_HTTPS_URL;
@@ -31,6 +31,25 @@ export const createViemWalletClient = async () => {
   });
 };
 
+/**
+ * Created a viem Public Client
+ * @param chainId
+ */
+export const createViemPublicClient = async () => {
+  const chain = base;
+  const transportWss = webSocket(baseWssUrl);
+  const transportHttps = http(baseHttpsUrl);
+  const client = createPublicClient({
+    chain: chain,
+    transport: fallback([
+      transportWss,
+      transportHttps,
+      http(), // finally fall back to the public one
+    ]),
+  });
+  return client;
+};
+
 export const handler = async (event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResultV2> => {
   console.log('Hello from backend-relayer');
   console.log('Event', JSON.stringify(event));
@@ -39,16 +58,20 @@ export const handler = async (event: APIGatewayProxyEventV2): Promise<APIGateway
   assert(!!body.txData, 'txData must be provided');
   assert(!!body.to, 'to must be provided');
   const viemWalletClient = await createViemWalletClient();
+  const viemPublicClient = await createViemPublicClient();
   const { txData, to } = body;
-  const tx = await viemWalletClient.sendTransaction({
+  const txHash = await viemWalletClient.sendTransaction({
     to: to,
     data: txData,
   });
-  console.log('Transaction', tx);
+  const receipt = await viemPublicClient.waitForTransactionReceipt({
+    hash: txHash,
+  });
   return {
-    statusCode: 200,
+    statusCode: 201,
     body: JSON.stringify({
-      message: 'Hello from backend-relayer',
+      txHash: txHash,
+      receipt: receipt,
     }),
   };
 };
