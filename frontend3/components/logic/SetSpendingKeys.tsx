@@ -17,13 +17,15 @@ export default function SetSpendingKeys(): React.ReactElement {
   const setKeyInKeystore = async () => {
     const newKeys = await Promise.all(keys.map(async key => {
       if (key.publicKey === selectedKey) {
-        await registerNewKey(key.privateKey as `0x${string}`)
+        const index = await registerNewKey(key.privateKey as `0x${string}`)
           .catch((error) => {
             console.error(error);
             key.isSet = false;
             return;
           });
         key.isSet = true;
+        if (index)
+        key.index = index.toString();
         console.log(key.publicKey)
       } else {
         key.isSet = false;
