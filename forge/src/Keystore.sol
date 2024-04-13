@@ -38,6 +38,15 @@ contract Keystore {
         return leaves[index];
     }
 
+    // Get all leaves
+    function getAllLeaves() public view returns (bytes32[] memory) {
+        bytes32[] memory leavesToReturn = new bytes32[](64);
+        for (uint256 i = 0; i < 64; i++) {
+            leavesToReturn[i] = leaves[i];
+        }
+        return leavesToReturn;
+    }
+
     // Compute the value of a leaf
     function computeLeaf(uint256 index, bytes32 pubKeyX, bytes32 pubKeyY) public view returns (bytes32) {
         bytes32 pubKeyHash = keccak256(abi.encodePacked(pubKeyX, pubKeyY));

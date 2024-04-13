@@ -4,9 +4,9 @@
 
 Deployed contracts:
 * Verifier - 0x869a859a31b0dcc6a99ae4461d7163f4335819d1 - https://basescan.org/address/0x869a859a31b0dcc6a99ae4461d7163f4335819d1#code
-* Keystore - 0x1b06b0519cfb4a395ad1a549589b325094a46d13 - https://basescan.org/address/0x1b06b0519cfb4a395ad1a549589b325094a46d13#code
+* Keystore - 0xBA4723FB08e9f846e0A6308060fA32C87B4AE040 - https://basescan.org/address/0xBA4723FB08e9f846e0A6308060fA32C87B4AE040#code
 * Hydrator - 0xEd249a7C0E7618987696DBfe5F18908993cc60d1 - https://basescan.org/address/0xed249a7c0e7618987696dbfe5f18908993cc60d1#code
-* StealthSafeFactory - 0x5C8Cc53CC5a27a359C1F3Ec18a2B7B969F7F773d - https://basescan.org/address/0x5c8cc53cc5a27a359c1f3ec18a2b7b969f7f773d#code
+* StealthSafeFactory - 0x4CFAF6CeEc70aF35259e0d494a088219FD58c3a1 - https://basescan.org/address/0x4cfaf6ceec70af35259e0d494a088219fd58c3a1#code
 
 Foundry consists of:
 
