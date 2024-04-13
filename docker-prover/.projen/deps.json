@@ -97,6 +97,11 @@
       "type": "runtime"
     },
     {
+      "name": "dotenv",
+      "version": "16.4.5",
+      "type": "runtime"
+    },
+    {
       "name": "express",
       "version": "4.19.2",
       "type": "runtime"

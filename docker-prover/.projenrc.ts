@@ -13,6 +13,7 @@ const project = new awscdk.AwsCdkTypeScriptApp({
     'aws-lambda@1.0.7',
     'express@4.19.2',
     'body-parser@1.20.2',
+    'dotenv@16.4.5',
   ],
   devDeps: [
     '@types/express@4.17.21',

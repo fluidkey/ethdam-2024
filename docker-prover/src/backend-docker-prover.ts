@@ -1,6 +1,10 @@
 import path from 'node:path';
 import { App, Stack, StackProps, aws_ec2, aws_ecs } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
+import * as cdk from 'aws-cdk-lib';
+import { configDotenv } from 'dotenv';
+
+configDotenv();
 
 export class DockerProverStack extends Stack {
   constructor(scope: Construct, id: string, props: StackProps = {}) {
@@ -89,7 +93,12 @@ export class DockerProverStack extends Stack {
 
 const app = new App();
 
-new DockerProverStack(app, 'docker-prover-dev', {});
-// new MyStack(app, 'docker-prover-prod', { env: prodEnv });
-
+const stack = new DockerProverStack(app, 'docker-prover-dev', {
+  env: {
+    account: process.env.ACCOUNT,
+    region: process.env.REGION,
+  },
+});
+cdk.Tags.of(stack).add('microservice', 'ethdam-2024');
+cdk.Tags.of(stack).add('environment', 'dev');
 app.synth();
