@@ -12,14 +12,17 @@
     "@noble/secp256k1": "1",
     "@radix-ui/react-select": "^2.0.0",
     "@radix-ui/react-slot": "^1.0.2",
+    "axios": "^1.6.8",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "lucide-react": "^0.368.0",
+    "merkletreejs": "^0.3.11",
     "next": "14.2.1",
     "react": "^18",
     "react-dom": "^18",
     "tailwind-merge": "^2.2.2",
     "tailwindcss-animate": "^1.0.7",
+    "ts-node": "^10.9.2",
     "viem": "^2.9.16"
   },
   "devDependencies": {
