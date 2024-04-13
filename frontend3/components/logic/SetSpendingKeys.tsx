@@ -14,19 +14,24 @@ export default function SetSpendingKeys(): React.ReactElement {
   // Find the selected key object
   const selectedKeyObject = keys.find(key => key.publicKey === selectedKey);
 
+  // Check if any of the keys is set
+  const isAnyKeySet = keys.some(key => key.isSet);
+  console.log(isAnyKeySet);
+
   const setKeyInKeystore = async () => {
     const newKeys = await Promise.all(keys.map(async key => {
       if (key.publicKey === selectedKey) {
-        const index = await registerNewKey(key.privateKey as `0x${string}`)
-          .catch((error) => {
-            console.error(error);
-            key.isSet = false;
-            return;
-          });
+        if (!isAnyKeySet) {
+          const index = await registerNewKey(key.privateKey as `0x${string}`)
+            .catch((error) => {
+              console.error(error);
+              key.isSet = false;
+              return;
+            });
+          if (index)
+          key.index = index.toString();
+        }
         key.isSet = true;
-        if (index)
-        key.index = index.toString();
-        console.log(key.publicKey)
       } else {
         key.isSet = false;
       }
@@ -73,7 +78,7 @@ export default function SetSpendingKeys(): React.ReactElement {
             </SelectContent>
           </Select>
           <div className="text-center ml-3">
-            <Button className="bg-slate-500 hover:bg-slate-400" disabled={keys.length === 0} onClick={setKeyInKeystore}>
+            <Button className="bg-slate-500 hover:bg-slate-400" disabled={keys.length === 0 || selectedKeyObject?.isSet} onClick={setKeyInKeystore}>
               Set keys
             </Button>
           </div>
