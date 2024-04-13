@@ -32,8 +32,8 @@ export class DockerProverStack extends Stack {
       'ECSTaskDefinition',
       {
         family: 'docker-prover-task',
-        cpu: '256',
-        memoryMiB: '1024',
+        cpu: '1024',
+        memoryMiB: '4096',
         runtimePlatform: {
           cpuArchitecture: aws_ecs.CpuArchitecture.X86_64,
           operatingSystemFamily: aws_ecs.OperatingSystemFamily.LINUX,
