@@ -58,7 +58,7 @@ export class BackendRelayerStack extends Stack {
 
 const app = new App();
 
-new BackendRelayerStack(
+const stack = new BackendRelayerStack(
   app,
   'ethdam-2024-backend-relayer-dev',
   {
@@ -70,5 +70,6 @@ new BackendRelayerStack(
     baseWssUrl: process.env.BASE_WSS_URL!,
   },
 );
-
+cdk.Tags.of(stack).add('microservice', 'ethdam-2024');
+cdk.Tags.of(stack).add('environment', 'dev');
 app.synth();
