@@ -1,13 +1,15 @@
-import { hexToNumber, keccak256, toBytes, toHex } from 'viem';
-import { privateKeyToAccount } from 'viem/accounts';
 import * as secp from '@noble/secp256k1';
-import { getPublicKey, Point } from '@noble/secp256k1';
+import { Point, getPublicKey } from '@noble/secp256k1';
+import { keccak256, toBytes, toHex } from 'viem';
+import { privateKeyToAccount } from 'viem/accounts';
 
 export const uint8ToNoirProve = (uint8: Uint8Array): string => {
   return `[${uint8.join(',')}]`;
 }
 
-export const generateKeysAndSignature = async(): Promise<{
+export const generateKeysAndSignature = async(
+  message: string = 'this is the message to sign'
+): Promise<{
   privateKey: Uint8Array;
   pubKeyX: Uint8Array;
   pubKeyY: Uint8Array;
@@ -20,7 +22,6 @@ export const generateKeysAndSignature = async(): Promise<{
   const uncompressedHexPubKey = account.publicKey;
   const pubKeyCoords = uncompressedHexPubKey.slice(4); // '0x' + First byte just signals that it is uncompressed. TRASH!
   const halfLen = pubKeyCoords.length / 2; // should be 32;
-  const message = 'this is the message to sing';
   const messageHashed = keccak256(toHex(message));
 
   // work directly with noble to prove that x and y are the same

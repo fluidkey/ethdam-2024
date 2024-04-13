@@ -45,7 +45,7 @@ contract KeystoreTest is Test {
         assertTrue(verified, "Verification failed");
     }
 
-    function test_AddKey() public {
+    function test_AddUpdateKey() public {
         bytes32[3] memory fixedProofs = [
             bytes32(0x0eb5be412f275a18f6e4d622aee4ff40b21467c926224771b782d4c095d1444b),
             bytes32(0x6fc4e292df09c8fe0e4ada2e390bd1736ff287e9bbd4e013275676490910b19a),
@@ -59,11 +59,23 @@ contract KeystoreTest is Test {
 
         (bytes32 newHash, bytes32 rootHash) = keystore.addKey(
             proofs,
-            bytes32(0x6fc4e292df09c8fe0e4ada2e390bd1736ff287e9bbd4e013275676490910b19a),
-            bytes32(0xcc91b473d1d747edcc6455265f693c21f4605c982b1480a03f20b2358b059eca)
+            bytes32(0xd07902618ebcddf72757caeaa3856c3f84207fc70993c252a4b4a0a9b6e8fa0e),
+            bytes32(0xd17ad691459a0b570a2ac9a039a56a74dd0c5597b11b793b17991b123db576ad)
         );
 
         console.logBytes32(newHash);
         console.logBytes32(rootHash);
+
+        (bytes32 secondHash, bytes32 secondRootHash) = keystore.updateKey(
+            0,
+            bytes32(0x6fc4e292df09c8fe0e4ada2e390bd1736ff287e9bbd4e013275676490910b19a),
+            bytes32(0xcc91b473d1d747edcc6455265f693c21f4605c982b1480a03f20b2358b059eca),
+            newPubKeyX,
+            newPubKeyY,
+            proof,
+            v,
+            r,
+            s
+        );
     }
 }
