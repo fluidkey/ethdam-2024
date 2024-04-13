@@ -13,7 +13,7 @@ use dep::std;
 fn main(
     hashed_message: pub [u8; 32], pub_key_x: [u8; 32], pub_key_y: [u8; 32], signature: [u8; 64],
     stealth_secret: [u8; 32], ks_index: [u8; 32], stealth_init: pub [u8; 32],
-    proofs: [[u8; 32]; 3], merkle_state_root: pub [u8; 32]
+    proofs: [[u8; 32]; 6], proofs_position: [u8; 6], merkle_state_root: pub [u8; 32]
 ) {
     // verify signature
     let valid_signature = std::ecdsa_secp256k1::verify_signature(pub_key_x, pub_key_y, signature, hashed_message);
@@ -28,7 +28,7 @@ fn main(
         std::hash::keccak256(concat_uint256_array(pub_key_hash, ks_index), 64),
         32
     );
-    assert(eval_merkle_root_4_levels(leaf, proofs) == merkle_state_root);
+    assert(eval_merkle_root_6_levels(leaf, proofs, proofs_position) == merkle_state_root);
 }
 
 // concat 2 keccak256 into a one u512 value
@@ -44,11 +44,15 @@ unconstrained fn concat_uint256_array(arr1: [u8; 32], arr2: [u8; 32]) -> [u8; 64
 }
 
 // concat 2 keccak256 into a one u512 value
-unconstrained fn eval_merkle_root_4_levels(leaf: [u8; 32], proofs: [[u8; 32]; 3]) -> [u8; 32] {
+unconstrained fn eval_merkle_root_6_levels(leaf: [u8; 32], proofs: [[u8; 32]; 6], proofs_position: [u8; 6]) -> [u8; 32] {
     let mut current_step: [u8; 32] = leaf;
     // loop over the proofs
-    for p in 0..3 {
-        current_step = std::hash::keccak256(concat_uint256_array(current_step, proofs[p]), 64);
+    for p in 0..6 {
+        if (proofs_position[p] == 0) {
+            current_step = std::hash::keccak256(concat_uint256_array(proofs[p], current_step), 64);
+        } else {
+            current_step = std::hash::keccak256(concat_uint256_array(current_step, proofs[p]), 64);
+        }
     }
     current_step
 }
