@@ -51,27 +51,38 @@ export const createViemPublicClient = async () => {
 };
 
 export const handler = async (event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResultV2> => {
-  console.log('Hello from backend-relayer');
-  console.log('Event', JSON.stringify(event));
-  const body = !!event.body ? JSON.parse(event.body) : {};
-  console.log('Body', JSON.stringify(body));
-  assert(!!body.txData, 'txData must be provided');
-  assert(!!body.to, 'to must be provided');
-  const viemWalletClient = await createViemWalletClient();
-  const viemPublicClient = await createViemPublicClient();
-  const { txData, to } = body;
-  const txHash = await viemWalletClient.sendTransaction({
-    to: to,
-    data: txData,
-  });
-  const receipt = await viemPublicClient.waitForTransactionReceipt({
-    hash: txHash,
-  });
-  return {
-    statusCode: 201,
-    body: JSON.stringify({
-      txHash: txHash,
-      receipt: receipt,
-    }),
-  };
+  try {
+    console.log('Event', JSON.stringify(event));
+    const body = !!event.body ? JSON.parse(event.body) : {};
+    console.log('Body', JSON.stringify(body));
+    assert(!!body.txData, 'txData must be provided');
+    assert(!!body.to, 'to must be provided');
+    const viemWalletClient = await createViemWalletClient();
+    const viemPublicClient = await createViemPublicClient();
+    const { txData, to } = body;
+    const txHash = await viemWalletClient.sendTransaction({
+      to: to,
+      data: txData,
+    });
+    const receipt = await viemPublicClient.waitForTransactionReceipt({
+      hash: txHash,
+    });
+    console.log(receipt);
+    return {
+      statusCode: 201,
+      body: JSON.stringify({
+        success: true,
+        txHash: txHash,
+        // receipt: receipt,
+      }),
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({
+        success: false,
+      }),
+    };
+  }
 };
