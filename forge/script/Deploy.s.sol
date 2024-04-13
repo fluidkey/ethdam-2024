@@ -50,7 +50,7 @@ contract DeployStealthSafeFactoryScript is Script {
         vm.startBroadcast(deployerPrivateKey);
         address _hydrator = address(0xEd249a7C0E7618987696DBfe5F18908993cc60d1);
         address _verifier = address(0x869A859a31b0Dcc6a99ae4461d7163F4335819d1);
-        address _keystore = address(0xBA4723FB08e9f846e0A6308060fA32C87B4AE040);
+        address _keystore = address(0x2b63f2748C3582EEf7134d7912895Ab65cfc6Db2);
         StealthSafeFactory ssf = new StealthSafeFactory(_verifier, _keystore, _hydrator);
         vm.stopBroadcast();
     }

@@ -1,7 +1,7 @@
-import { KeystoreABI } from '@/components/actions/constants/KeystoreABI';
-import { createViemPublicClient, generateLeaves, generateMerkleTree } from '@/components/actions/common';
+import { KeystoreABI } from '@/components/actions/constants/ABI/KeystoreABI';
+import { createViemPublicClient, generateLeaves, generateMerkleTree } from '@/components/actions/_common';
 import { KEYSTORE } from '@/components/actions/constants/contractAddress';
-import { concat, encodeFunctionData, keccak256, toHex } from 'viem';
+import { encodeFunctionData } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import axios from 'axios';
 import { RELAYER } from '@/components/actions/constants/backend';
@@ -10,7 +10,7 @@ import { RELAYER } from '@/components/actions/constants/backend';
  * Register the user key inside the Keystore contract
  * @param privateKey
  */
-export const registerNewKey = async (privateKey: `0x${string}`) => {
+export const registerNewKey = async (privateKey: `0x${string}`): Promise<number> => {
   const client = createViemPublicClient();
   // read next available position
   const nextFreeSlot = await client.readContract({
@@ -59,4 +59,6 @@ export const registerNewKey = async (privateKey: `0x${string}`) => {
     txData: contractCallData,
     to: KEYSTORE
   });
+
+  return nextFreeSlot;
 }
