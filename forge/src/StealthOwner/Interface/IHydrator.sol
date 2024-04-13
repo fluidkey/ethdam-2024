@@ -2,5 +2,5 @@
 pragma solidity ^0.8.0;
 
 interface IHydrator {
-    function deploySafe(bytes32 signerAddress) public;
+    function deploySafe(bytes32 signerAddress) external;
 }

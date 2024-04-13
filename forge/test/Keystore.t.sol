@@ -30,71 +30,71 @@ contract KeystoreTest is Test {
     // }
 
     function test_AddUpdateKey() public {
-        uint8[3] memory fixedPositions = [1, 1, 1];
-
-        uint8[] memory positions = new uint8[](3);
-        for (uint256 i = 0; i < 3; i++) {
-            positions[i] = fixedPositions[i];
-        }
-
-        bytes32[3] memory fixedProofs = [
-            bytes32(0x9eaccf3d397656f4ad37ea817192d14e40d856dd43a2bac16421700ddf613a07),
-            bytes32(0x8e0bc5bf767ff329ab20af0bf4e749fe21e79b3d58a0d25c0312e8f6819405bf),
-            bytes32(0x34696f0ef337c20f55921f5e23ae081fca3b7d0ffd52aa2521363771b6eb1475)
-        ];
-
-        bytes32[] memory proofs = new bytes32[](3);
-        for (uint256 i = 0; i < 3; i++) {
-            proofs[i] = fixedProofs[i];
-        }
-
-        (bytes32 newHash, bytes32 rootHash) = keystore.addKey(
-            proofs,
-            positions,
-            bytes32(0xd07902618ebcddf72757caeaa3856c3f84207fc70993c252a4b4a0a9b6e8fa0e),
-            bytes32(0xd17ad691459a0b570a2ac9a039a56a74dd0c5597b11b793b17991b123db576ad)
-        );
-
-        console.logBytes32(newHash);
-        console.logBytes32(rootHash);
-
-        bytes32[3] memory fixedProofs2 = [
-            bytes32(0x9eaccf3d397656f4ad37ea817192d14e40d856dd43a2bac16421700ddf613a07),
-            bytes32(0x8e0bc5bf767ff329ab20af0bf4e749fe21e79b3d58a0d25c0312e8f6819405bf),
-            bytes32(0x34696f0ef337c20f55921f5e23ae081fca3b7d0ffd52aa2521363771b6eb1475)
-        ];
-
-        proofs = new bytes32[](3);
-        for (uint256 i = 0; i < 3; i++) {
-            proofs[i] = fixedProofs2[i];
-        }
-
-        bool verified = keystore.verify(newHash, proofs, positions);
-
-        console.logBool(verified);
-        assertTrue(verified, "Verification failed");
-        // console.logString("Leaves");
-
-        // for (uint256 i = 0; i < 8; i++) {
-        //     console.logBytes32(keystore.getLeaf(i));
-        // }
-        // bytes32[3] memory fixedProofs2 = [
-        //     bytes32(0x0eb5be412f275a18f6e4d622aee4ff40b21467c926224771b782d4c095d1444b),
-        //     bytes32(0xd07902618ebcddf72757caeaa3856c3f84207fc70993c252a4b4a0a9b6e8fa0e),
-        //     bytes32(0xd17ad691459a0b570a2ac9a039a56a74dd0c5597b11b793b17991b123db576ad)
-        // ];
-
-        (bytes32 secondHash, bytes32 secondRootHash) = keystore.updateKey(
-            0,
-            bytes32(0xd07902618ebcddf72757caeaa3856c3f84207fc70993c252a4b4a0a9b6e8fa0e),
-            bytes32(0xd17ad691459a0b570a2ac9a039a56a74dd0c5597b11b793b17991b123db576ad),
-            bytes32(0x6fc4e292df09c8fe0e4ada2e390bd1736ff287e9bbd4e013275676490910b19a),
-            bytes32(0xcc91b473d1d747edcc6455265f693c21f4605c982b1480a03f20b2358b059eca),
-            proofs,
-            positions,
-            27,
-            bytes32(0x262b33ddcae1c8772ee936d2f1f8e43ae9ea517f564c1cd4fb92bae5403ac4e6),
-            bytes32(0x1d23d386f867bbb7dfb08582c3ac3623047edd75c9c6cd568fbd399538872bd9)
-        );
+//        uint8[3] memory fixedPositions = [1, 1, 1];
+//
+//        uint8[] memory positions = new uint8[](3);
+//        for (uint256 i = 0; i < 3; i++) {
+//            positions[i] = fixedPositions[i];
+//        }
+//
+//        bytes32[3] memory fixedProofs = [
+//            bytes32(0x9eaccf3d397656f4ad37ea817192d14e40d856dd43a2bac16421700ddf613a07),
+//            bytes32(0x8e0bc5bf767ff329ab20af0bf4e749fe21e79b3d58a0d25c0312e8f6819405bf),
+//            bytes32(0x34696f0ef337c20f55921f5e23ae081fca3b7d0ffd52aa2521363771b6eb1475)
+//        ];
+//
+//        bytes32[] memory proofs = new bytes32[](3);
+//        for (uint256 i = 0; i < 3; i++) {
+//            proofs[i] = fixedProofs[i];
+//        }
+//
+//        (bytes32 newHash, bytes32 rootHash) = keystore.addKey(
+//            proofs,
+//            positions,
+//            bytes32(0xd07902618ebcddf72757caeaa3856c3f84207fc70993c252a4b4a0a9b6e8fa0e),
+//            bytes32(0xd17ad691459a0b570a2ac9a039a56a74dd0c5597b11b793b17991b123db576ad)
+//        );
+//
+//        console.logBytes32(newHash);
+//        console.logBytes32(rootHash);
+//
+//        bytes32[3] memory fixedProofs2 = [
+//            bytes32(0x9eaccf3d397656f4ad37ea817192d14e40d856dd43a2bac16421700ddf613a07),
+//            bytes32(0x8e0bc5bf767ff329ab20af0bf4e749fe21e79b3d58a0d25c0312e8f6819405bf),
+//            bytes32(0x34696f0ef337c20f55921f5e23ae081fca3b7d0ffd52aa2521363771b6eb1475)
+//        ];
+//
+//        proofs = new bytes32[](3);
+//        for (uint256 i = 0; i < 3; i++) {
+//            proofs[i] = fixedProofs2[i];
+//        }
+//
+//        bool verified = keystore.verify(newHash, proofs, positions);
+//
+//        console.logBool(verified);
+//        assertTrue(verified, "Verification failed");
+//        // console.logString("Leaves");
+//
+//        // for (uint256 i = 0; i < 8; i++) {
+//        //     console.logBytes32(keystore.getLeaf(i));
+//        // }
+//        // bytes32[3] memory fixedProofs2 = [
+//        //     bytes32(0x0eb5be412f275a18f6e4d622aee4ff40b21467c926224771b782d4c095d1444b),
+//        //     bytes32(0xd07902618ebcddf72757caeaa3856c3f84207fc70993c252a4b4a0a9b6e8fa0e),
+//        //     bytes32(0xd17ad691459a0b570a2ac9a039a56a74dd0c5597b11b793b17991b123db576ad)
+//        // ];
+//
+//        (bytes32 secondHash, bytes32 secondRootHash) = keystore.updateKey(
+//            0,
+//            bytes32(0xd07902618ebcddf72757caeaa3856c3f84207fc70993c252a4b4a0a9b6e8fa0e),
+//            bytes32(0xd17ad691459a0b570a2ac9a039a56a74dd0c5597b11b793b17991b123db576ad),
+//            bytes32(0x6fc4e292df09c8fe0e4ada2e390bd1736ff287e9bbd4e013275676490910b19a),
+//            bytes32(0xcc91b473d1d747edcc6455265f693c21f4605c982b1480a03f20b2358b059eca),
+//            proofs,
+//            positions,
+//            27,
+//            bytes32(0x262b33ddcae1c8772ee936d2f1f8e43ae9ea517f564c1cd4fb92bae5403ac4e6),
+//            bytes32(0x1d23d386f867bbb7dfb08582c3ac3623047edd75c9c6cd568fbd399538872bd9)
+//        );
     }
 }

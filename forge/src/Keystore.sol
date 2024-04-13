@@ -11,16 +11,16 @@ contract Keystore {
     }
 
     // Verify a leaf is part of the merkle tree
-    function verify(bytes32 leaf, bytes32[] memory proofs, uint8[] memory positions) public view returns (bool) {
+    function verify(bytes32 leaf, bytes32[6] calldata proofs, uint8[6] calldata positions) public view returns (bool) {
         bytes32 computedRoot = computeRoot(leaf, proofs, positions);
         return (computedRoot == root);
     }
 
     // Compute the root hash of a merkle tree
-    function computeRoot(bytes32 leaf, bytes32[] memory proofs, uint8[] memory positions)
-        public
-        pure
-        returns (bytes32)
+    function computeRoot(bytes32 leaf, bytes32[6] calldata proofs, uint8[6] calldata positions)
+    public
+    pure
+    returns (bytes32)
     {
         bytes32 computedRoot = keccak256(abi.encodePacked(leaf));
         for (uint256 i = 0; i < proofs.length; i++) {
@@ -50,10 +50,8 @@ contract Keystore {
     }
 
     // Add a new key to an empty slot in the merkle tree
-    function addKey(bytes32[] memory proofs, uint8[] memory positions, bytes32 newPubKeyX, bytes32 newPubKeyY)
-        public
-        returns (bytes32, bytes32)
-    {
+    function addKey(bytes32[6] calldata proofs, uint8[6] calldata positions, bytes32 newPubKeyX, bytes32 newPubKeyY)
+    public returns (bytes32, bytes32) {
         require(nextFreeSlot < 64, "No more space");
         bytes32 currentLeaf = computeLeaf(nextFreeSlot, bytes32(0), bytes32(0));
         require(verify(currentLeaf, proofs, positions), "Invalid proofs");
@@ -72,12 +70,45 @@ contract Keystore {
         bytes32 currentPubKeyY,
         bytes32 newPubKeyX,
         bytes32 newPubKeyY,
-        bytes32[] memory proofs,
-        uint8[] memory positions,
+        bytes32[6] calldata proofs,
+        uint8[6] calldata positions,
         uint8 v,
         bytes32 r,
         bytes32 s
     ) public returns (bytes32, bytes32) {
+        _internalVerifyUpdatePermissions(
+            index,
+            currentPubKeyX,
+            currentPubKeyY,
+            newPubKeyX,
+            newPubKeyY,
+            proofs,
+            positions,
+            v,
+            r,
+            s
+        );
+        return _internalNewLeafUpdate(
+            index,
+            newPubKeyX,
+            newPubKeyY,
+            proofs,
+            positions
+        );
+    }
+
+    function _internalVerifyUpdatePermissions(
+        uint256 index,
+        bytes32 currentPubKeyX,
+        bytes32 currentPubKeyY,
+        bytes32 newPubKeyX,
+        bytes32 newPubKeyY,
+        bytes32[6] calldata proofs,
+        uint8[6] calldata positions,
+        uint8 v,
+        bytes32 r,
+        bytes32 s
+    ) internal view {
         require(index < 64, "Index out of bound");
         bytes32 leaf = leaves[index];
         require(verify(leaf, proofs, positions), "Invalid proofs");
@@ -87,6 +118,15 @@ contract Keystore {
         address currentAddress = publicKeyToAddress(currentPubKeyX, currentPubKeyY);
         address recoveredAddress = ecrecover(message, v, r, s);
         require(currentAddress == recoveredAddress, "Invalid signature");
+    }
+
+    function _internalNewLeafUpdate(
+        uint256 index,
+        bytes32 newPubKeyX,
+        bytes32 newPubKeyY,
+        bytes32[6] calldata proofs,
+        uint8[6] calldata positions
+    ) internal returns (bytes32, bytes32) {
         bytes32 newLeaf = computeLeaf(index, newPubKeyX, newPubKeyY);
         leaves[index] = newLeaf;
         bytes32 computedRoot = computeRoot(newLeaf, proofs, positions);
