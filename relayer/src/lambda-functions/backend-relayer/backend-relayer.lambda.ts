@@ -2,7 +2,7 @@ import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from 'aws-lambda';
 import assert from 'assert';
 import { privateKeyToAccount } from 'viem/accounts';
 import { base } from 'viem/chains';
-import { createPublicClient, createWalletClient, fallback, http, webSocket } from 'viem';
+import { createPublicClient, createWalletClient, decodeEventLog, fallback, http, parseAbi, webSocket } from 'viem';
 
 const relayerPrivateKey: string | undefined = process.env.RELAYER_PRIVATE_KEY;
 const baseHttpsUrl: string | undefined = process.env.BASE_HTTPS_URL;
@@ -67,13 +67,24 @@ export const handler = async (event: APIGatewayProxyEventV2): Promise<APIGateway
     const receipt = await viemPublicClient.waitForTransactionReceipt({
       hash: txHash,
     });
-    console.log(receipt);
+    const stealthAddressTopic = receipt.logs.find(log => log.topics[0] === '0x4f51faf6c4561ff95f067657e43439f0f856d97c04d9ec9070a6199ad418e235');
+    let stealthSafeAddress: string | undefined;
+    if (!!stealthAddressTopic) {
+      const addressDecodeEvent = decodeEventLog({
+        abi: parseAbi(['event ProxyCreation(address, address)']),
+        // data should be 64 bytes, but is only 32 bytes.
+        data: stealthAddressTopic.data,
+        topics: stealthAddressTopic.topics,
+      });
+      console.log(addressDecodeEvent.args[0]);
+      stealthSafeAddress = addressDecodeEvent.args[0];
+    }
     return {
       statusCode: 201,
       body: JSON.stringify({
         success: true,
         txHash: txHash,
-        // receipt: receipt,
+        stealthSafeAddress: stealthSafeAddress,
       }),
     };
   } catch (error) {
