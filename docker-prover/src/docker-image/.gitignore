@@ -29,9 +29,6 @@ jspm_packages/
 *.tgz
 .yarn-integrity
 .cache
-.idea/
-.env
-.yalc
 /test-reports/
 junit.xml
 /coverage/
@@ -42,9 +39,4 @@ junit.xml
 /lib
 /dist/
 !/.eslintrc.json
-/assets/
-!/cdk.json
-/cdk.out/
-.cdk.staging/
-.parcel-cache/
 !/.projenrc.ts
