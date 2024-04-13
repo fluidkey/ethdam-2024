@@ -3,6 +3,7 @@
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle
 } from "@/components/ui/card";
@@ -24,10 +25,10 @@ export default function GenerateKeys(): React.ReactElement {
     const color = hashToColor(publicKey);
     
     // add the keys to the keys array in the state
-    setKeys(prevKeys => [...prevKeys, {privateKey, publicKey, displayPubKey, color}]);
+    setKeys(prevKeys => [...prevKeys, {privateKey, publicKey, displayPubKey, color, isSet: false, stealthAccounts: ["0xbaeb5cfc8d9d851ce9a4764e9f414510f63f5b61df8cd22810e6037023d1feee"]}]);
 
     // update the localStorage
-    localStorage.setItem('keys', JSON.stringify([...keys, {privateKey, publicKey, displayPubKey, color}]));
+    localStorage.setItem('keys', JSON.stringify([...keys, {privateKey, publicKey, displayPubKey, color, isSet: false, stealthAccounts: []}]));
   }
 
   const deleteKey = (index: number) => {
@@ -62,18 +63,21 @@ export default function GenerateKeys(): React.ReactElement {
         <CardTitle>
           1. Generate your keys
         </CardTitle>
+        <CardDescription>
+          Generate a new private key to control stealth accounts.
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="text-center">
-          <Button onClick={generateKeys} className="mt-2 mb-4 bg-slate-500 hover:bg-slate-400">
+          <Button onClick={generateKeys} className="bg-slate-500 hover:bg-slate-400">
             Generate keys
           </Button> 
         </div>
-        <div className="flex flex-col items-center justify-center">
+        <div className="flex flex-col items-center justify-center mt-2">
           {keys.map((key, index) => (
             <div key={index} style={{ display: 'flex', alignItems: 'center' }}>
               <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: hashToColor(key.publicKey), marginRight: '10px' }}></div>
-              <p className="w-44">{key.publicKey.substring(0, 6) + '...' + key.publicKey.substring(key.publicKey.length - 4)}</p>
+              <p className="w-44 font-mono">{key.publicKey.substring(0, 6) + '...' + key.publicKey.substring(key.publicKey.length - 4)}</p>
               <button className="ml-3" onClick={() => deleteKey(index)}>X</button>
             </div>
           ))}

@@ -7,6 +7,8 @@ interface KeyPair {
   publicKey: string;
   displayPubKey: string;
   color: string;
+  isSet: boolean;
+  stealthAccounts: string[];
 }
 
 interface MainContextType {

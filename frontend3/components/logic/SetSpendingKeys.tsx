@@ -3,15 +3,28 @@
 import React, { useState } from "react";
 import { useMain } from "../context/main";
 import { Button } from "../ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 
 export default function SetSpendingKeys(): React.ReactElement {
-  const { keys } = useMain();
+  const { keys, setKeys } = useMain();
   const [selectedKey, setSelectedKey] = useState<string>("Select a key to set");
 
   // Find the selected key object
   const selectedKeyObject = keys.find(key => key.publicKey === selectedKey);
+
+  const setKeyInKeystore = () => {
+    const newKeys = keys.map(key => {
+      if (key.publicKey === selectedKey) {
+        key.isSet = true;
+      } else {
+        key.isSet = false;
+      }
+      return key;
+    });
+    localStorage.setItem('keys', JSON.stringify(newKeys));
+    setKeys(newKeys);
+  }
 
   return(
     <Card className="flex flex-col align-middle justify-center mt-12 w-96">
@@ -19,6 +32,9 @@ export default function SetSpendingKeys(): React.ReactElement {
         <CardTitle>
           2. Set keys in the keystore
         </CardTitle>
+        <CardDescription>
+          Select the key that should control your stealth accounts.
+        </CardDescription>
       </CardHeader>
       <CardContent className="text-center">
         <div className="flex items-center justify-center">
@@ -32,7 +48,7 @@ export default function SetSpendingKeys(): React.ReactElement {
                   </div>
                 </SelectValue>
               ) : (
-                <SelectValue>Select a key to set</SelectValue>
+                <SelectValue>Select a keypair to set</SelectValue>
               )}
             </SelectTrigger>
             <SelectContent>
@@ -47,10 +63,23 @@ export default function SetSpendingKeys(): React.ReactElement {
             </SelectContent>
           </Select>
           <div className="text-center ml-3">
-            <Button className="bg-slate-500 hover:bg-slate-400" disabled={keys.length === 0}>
+            <Button className="bg-slate-500 hover:bg-slate-400" disabled={keys.length === 0} onClick={setKeyInKeystore}>
               Set keys
             </Button>
           </div>
+        </div>
+        <div>
+          {keys.map((key, index) => {
+            if (key.isSet) {
+              return (
+                <div key={key.publicKey} className="flex ml-1 items-center mt-6 font-semibold">
+                  <p className="mr-2">{"Active key ->"}</p>
+                  <div className="w-2.5 h-2.5 rounded-full mr-2.5" style={{ backgroundColor: key.color }} />
+                  <div className="font-mono">{key.displayPubKey}</div>
+                </div>
+              );
+            }
+          })}
         </div>
       </CardContent>
     </Card>
