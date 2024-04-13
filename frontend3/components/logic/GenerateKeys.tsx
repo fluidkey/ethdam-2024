@@ -75,10 +75,10 @@ export default function GenerateKeys(): React.ReactElement {
         </div>
         <div className="flex flex-col items-center justify-center mt-2">
           {keys.map((key, index) => (
-            <div key={index} style={{ display: 'flex', alignItems: 'center' }}>
+            <div key={index} className={index === 0 ? "mt-4" : ""} style={{ display: 'flex', alignItems: 'center' }}>
               <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: hashToColor(key.publicKey), marginRight: '10px' }}></div>
               <p className="w-44 font-mono">{key.publicKey.substring(0, 6) + '...' + key.publicKey.substring(key.publicKey.length - 4)}</p>
-              <button className="ml-3" onClick={() => deleteKey(index)}>X</button>
+              <button className={key.isSet ? "ml-3 text-gray-200" : "ml-3"} disabled={key.isSet} onClick={() => deleteKey(index)}>X</button>
             </div>
           ))}
         </div>
