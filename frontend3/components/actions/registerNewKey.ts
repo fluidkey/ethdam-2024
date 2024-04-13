@@ -28,7 +28,6 @@ export const registerNewKey = async (privateKey: `0x${string}`): Promise<number>
   const leaves = generateLeaves(onChainLeaves);
   // generate merkle tree
   const merkleTree = generateMerkleTree(leaves);
-  merkleTree.print();
   const leafPathProofs = merkleTree.getProof(merkleTree.getLeaf(nextFreeSlot));
   const proofs = leafPathProofs.map(
     p => '0x' + p.data.toString('hex')
