@@ -3,7 +3,7 @@ pragma solidity ^0.8.25;
 
 contract Keystore {
     bytes32 public root;
-    bytes32[8] public leaves;
+    bytes32[64] public leaves;
     uint256 public nextAvailableIndex = 0;
 
     constructor(bytes32 _root) {
@@ -29,7 +29,7 @@ contract Keystore {
         returns (bytes32, bytes32)
     {
         // verify the proofs are valid
-        require(nextAvailableIndex < 8, "No more space");
+        require(nextAvailableIndex < 64, "No more space");
         bytes32 nextAvailableKey = computeLeaf(nextAvailableIndex, bytes32(0), bytes32(0));
         require(verify(nextAvailableKey, proof, position), "Invalid proof");
         // compute the hash of the new public key
@@ -77,7 +77,7 @@ contract Keystore {
         bytes32 s
     ) public returns (bytes32, bytes32) {
         // verify the proofs are valid
-        require(index < 8, "Index out of bound");
+        require(index < 64, "Index out of bound");
         bytes32 leaf = leaves[index];
         require(verify(leaf, proof, position), "Invalid proof");
         // check that the leaf corresponds to currentPubKey
