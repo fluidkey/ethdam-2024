@@ -2,6 +2,7 @@ import { encodePacked, keccak256, toHex } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { generateKeysAndSignature } from "./generateSignature";
 import { generateMerkleTree, generateZeroLeaves } from "./merkleTreeV2";
+import * as secp from '@noble/secp256k1';
 
 async function main () {
   const zeroLeaves = generateZeroLeaves();
@@ -34,7 +35,13 @@ async function main () {
   const signature = await account.signMessage({
     message: { raw: encodedMessage },
   });
-  console.log('signature: ', signature);
+  const [signWithNoble, recovered] = await secp.sign(encodedMessage.slice(2), keyAndSign.privateKey, {
+    recovered: true,
+    der: false,
+  });
+  console.log('r', toHex(signWithNoble.slice(0,32)));
+  console.log('s', toHex(signWithNoble.slice(32,64)));
+  console.log('v: ', recovered + 27);
 }
 
 main();

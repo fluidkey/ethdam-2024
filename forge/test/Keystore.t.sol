@@ -83,9 +83,9 @@ contract KeystoreTest is Test {
             bytes32(0x6fc4e292df09c8fe0e4ada2e390bd1736ff287e9bbd4e013275676490910b19a),
             bytes32(0xcc91b473d1d747edcc6455265f693c21f4605c982b1480a03f20b2358b059eca),
             proofs,
-            28,
-            bytes32(0x964a6bd640d0c76521abe3c305ed5ec33579abcf555f2ac13c8f1e29cc425b3e),
-            bytes32(0x698577d8b9580200c913f991478bf221678b37d16022ce4c59872734cbe7d9a9)
+            27,
+            bytes32(0x262b33ddcae1c8772ee936d2f1f8e43ae9ea517f564c1cd4fb92bae5403ac4e6),
+            bytes32(0x1d23d386f867bbb7dfb08582c3ac3623047edd75c9c6cd568fbd399538872bd9)
         );
     }
 }
