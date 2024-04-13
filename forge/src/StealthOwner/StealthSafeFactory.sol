@@ -16,12 +16,13 @@ contract StealthSafeFactory {
         HYDRATOR = IHydrator(_hydrator);
     }
 
-    function deploySafe(bytes32 _stealth_init) public {
+    function deploySafe(bytes32 _stealth_init) public returns (address) {
         StealthOwner stealthOwner = new StealthOwner(
             _stealth_init,
             VERIFIER,
             KEYSTORE
         );
-        HYDRATOR.deploySafe(bytes32(uint256(uint160(address(stealthOwner))) << 96));
+        address deployedSafe = HYDRATOR.deploySafe(bytes32(uint256(uint160(address(stealthOwner))) << 96));
+        return deployedSafe;
     }
 }
