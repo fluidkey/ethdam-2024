@@ -1,9 +1,9 @@
 import assert from 'assert';
+import { readFileSync } from 'fs';
 import { exec } from 'node:child_process';
 import { writeFileSync } from 'node:fs';
 import bodyParser from 'body-parser';
 import express, { Request, Response } from 'express';
-import { readFileSync } from "fs";
 
 const app = express();
 const port = 8080;
