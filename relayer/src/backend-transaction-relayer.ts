@@ -47,6 +47,7 @@ export class BackendRelayerStack extends Stack {
       invokeMode: aws_lambda.InvokeMode.BUFFERED,
       cors: {
         allowedOrigins: ['*'],
+        allowedHeaders: ['*'],
       },
     });
     new cdk.CfnOutput(this, 'BackendRelayerLambdaUrl', {
