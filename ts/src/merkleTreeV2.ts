@@ -1,9 +1,11 @@
 import { MerkleTree } from 'merkletreejs';
 import { concat, keccak256, toHex } from 'viem';
 
+const NUM_LEAVES = 64;
+
 export const generateZeroLeaves = (): `0x${string}`[] => {
   let leaves: `0x${string}`[] = []
-  for (let i = 0; i < 8; i++) {
+  for (let i = 0; i < NUM_LEAVES; i++) {
     const leaf = generateLeaf(i, new Uint8Array(32), new Uint8Array(32));
     leaves.push(leaf);
   }
