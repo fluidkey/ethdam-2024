@@ -8,6 +8,7 @@ interface KeyPair {
   displayPubKey: string;
   color: string;
   isSet: boolean;
+  index?: number;
   stealthAccounts: string[];
 }
 

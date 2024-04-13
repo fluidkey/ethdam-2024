@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { registerNewKey } from "../actions/registerNewKey";
 import { useMain } from "../context/main";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
@@ -13,15 +14,22 @@ export default function SetSpendingKeys(): React.ReactElement {
   // Find the selected key object
   const selectedKeyObject = keys.find(key => key.publicKey === selectedKey);
 
-  const setKeyInKeystore = () => {
-    const newKeys = keys.map(key => {
+  const setKeyInKeystore = async () => {
+    const newKeys = await Promise.all(keys.map(async key => {
       if (key.publicKey === selectedKey) {
+        await registerNewKey(key.privateKey as `0x${string}`)
+          .catch((error) => {
+            console.error(error);
+            key.isSet = false;
+            return;
+          });
         key.isSet = true;
+        console.log(key.publicKey)
       } else {
         key.isSet = false;
       }
       return key;
-    });
+    }));
     localStorage.setItem('keys', JSON.stringify(newKeys));
     setKeys(newKeys);
   }
