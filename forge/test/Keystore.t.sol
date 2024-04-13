@@ -8,48 +8,39 @@ contract KeystoreTest is Test {
     Keystore public keystore;
 
     function setUp() public {
-        bytes32[8] memory fixedKeys = [
-            bytes32(0xf0df3dcda05b4fbd9c655cde3d5ceb211e019e72ec816e127a59e7195f2cd7f5),
-            bytes32(0x0eb5be412f275a18f6e4d622aee4ff40b21467c926224771b782d4c095d1444b),
-            bytes32(0x7d2944a272ac5bae96b5bd2f67b6c13276d541dc09eb1cf414d96b19a09e1c2f),
-            bytes32(0xcfb339bd1c51c488f6134f4ac63d1594afad827b3401c3fc51ed1da74a8ca14e),
-            bytes32(0x295841a49a1089f4b560f91cfbb0133326654dcbb1041861fc5dde96c724a22f),
-            bytes32(0xd08c889a2b804c67887cd70e57ff036e6bc341281711f6587c117607d171d093),
-            bytes32(0xf1ca0f4808f7f0c52440675894727c9e66265266cd1e1f5015f8b745ca2de5f3),
-            bytes32(0xd9e659536a2f603b20938d4b8c1783b32b56367744f7b53b49ad35612a31e7ca)
-        ];
-
-        bytes32[] memory keys = new bytes32[](8);
-        for (uint256 i = 0; i < 8; i++) {
-            keys[i] = fixedKeys[i];
-        }
-
-        keystore = new Keystore(bytes32(0xeca87e8a05428002d19fe3fd628ae2613f549c1c90b44eb975be8290582a9c89), keys);
+        keystore = new Keystore(bytes32(0x02524cdb499f6b542ce65e49d39b684829a54038618809edeb4cd9f797a4465b));
     }
 
-    function test_Verify() public view {
-        bytes32[3] memory fixedProofs = [
-            bytes32(0x0eb5be412f275a18f6e4d622aee4ff40b21467c926224771b782d4c095d1444b),
-            bytes32(0x6fc4e292df09c8fe0e4ada2e390bd1736ff287e9bbd4e013275676490910b19a),
-            bytes32(0xcc91b473d1d747edcc6455265f693c21f4605c982b1480a03f20b2358b059eca)
-        ];
+    // function test_Verify() public view {
+    //     bytes32[3] memory fixedProofs = [
+    //         bytes32(0x9eaccf3d397656f4ad37ea817192d14e40d856dd43a2bac16421700ddf613a07),
+    //         bytes32(0x8e0bc5bf767ff329ab20af0bf4e749fe21e79b3d58a0d25c0312e8f6819405bf),
+    //         bytes32(0x34696f0ef337c20f55921f5e23ae081fca3b7d0ffd52aa2521363771b6eb1475)
+    //     ];
 
-        bytes32[] memory proofs = new bytes32[](3);
+    //     bytes32[] memory proofs = new bytes32[](3);
+    //     for (uint256 i = 0; i < 3; i++) {
+    //         proofs[i] = fixedProofs[i];
+    //     }
+
+    //     bool verified =
+    //         keystore.verify(bytes32(0xf0df3dcda05b4fbd9c655cde3d5ceb211e019e72ec816e127a59e7195f2cd7f5), proofs);
+
+    //     assertTrue(verified, "Verification failed");
+    // }
+
+    function test_AddUpdateKey() public {
+        uint8[3] memory fixedPositions = [1, 1, 1];
+
+        uint8[] memory positions = new uint8[](3);
         for (uint256 i = 0; i < 3; i++) {
-            proofs[i] = fixedProofs[i];
+            positions[i] = fixedPositions[i];
         }
 
-        bool verified =
-            keystore.verify(bytes32(0xf0df3dcda05b4fbd9c655cde3d5ceb211e019e72ec816e127a59e7195f2cd7f5), proofs);
-
-        assertTrue(verified, "Verification failed");
-    }
-
-    function test_AddKey() public {
         bytes32[3] memory fixedProofs = [
-            bytes32(0x0eb5be412f275a18f6e4d622aee4ff40b21467c926224771b782d4c095d1444b),
-            bytes32(0x6fc4e292df09c8fe0e4ada2e390bd1736ff287e9bbd4e013275676490910b19a),
-            bytes32(0xcc91b473d1d747edcc6455265f693c21f4605c982b1480a03f20b2358b059eca)
+            bytes32(0x9eaccf3d397656f4ad37ea817192d14e40d856dd43a2bac16421700ddf613a07),
+            bytes32(0x8e0bc5bf767ff329ab20af0bf4e749fe21e79b3d58a0d25c0312e8f6819405bf),
+            bytes32(0x34696f0ef337c20f55921f5e23ae081fca3b7d0ffd52aa2521363771b6eb1475)
         ];
 
         bytes32[] memory proofs = new bytes32[](3);
@@ -59,11 +50,51 @@ contract KeystoreTest is Test {
 
         (bytes32 newHash, bytes32 rootHash) = keystore.addKey(
             proofs,
-            bytes32(0x6fc4e292df09c8fe0e4ada2e390bd1736ff287e9bbd4e013275676490910b19a),
-            bytes32(0xcc91b473d1d747edcc6455265f693c21f4605c982b1480a03f20b2358b059eca)
+            positions,
+            bytes32(0xd07902618ebcddf72757caeaa3856c3f84207fc70993c252a4b4a0a9b6e8fa0e),
+            bytes32(0xd17ad691459a0b570a2ac9a039a56a74dd0c5597b11b793b17991b123db576ad)
         );
 
         console.logBytes32(newHash);
         console.logBytes32(rootHash);
+
+        bytes32[3] memory fixedProofs2 = [
+            bytes32(0x9eaccf3d397656f4ad37ea817192d14e40d856dd43a2bac16421700ddf613a07),
+            bytes32(0x8e0bc5bf767ff329ab20af0bf4e749fe21e79b3d58a0d25c0312e8f6819405bf),
+            bytes32(0x34696f0ef337c20f55921f5e23ae081fca3b7d0ffd52aa2521363771b6eb1475)
+        ];
+
+        proofs = new bytes32[](3);
+        for (uint256 i = 0; i < 3; i++) {
+            proofs[i] = fixedProofs2[i];
+        }
+
+        bool verified = keystore.verify(newHash, proofs, positions);
+
+        console.logBool(verified);
+        assertTrue(verified, "Verification failed");
+        // console.logString("Leaves");
+
+        // for (uint256 i = 0; i < 8; i++) {
+        //     console.logBytes32(keystore.getLeaf(i));
+        // }
+        // bytes32[3] memory fixedProofs2 = [
+        //     bytes32(0x0eb5be412f275a18f6e4d622aee4ff40b21467c926224771b782d4c095d1444b),
+        //     bytes32(0xd07902618ebcddf72757caeaa3856c3f84207fc70993c252a4b4a0a9b6e8fa0e),
+        //     bytes32(0xd17ad691459a0b570a2ac9a039a56a74dd0c5597b11b793b17991b123db576ad)
+        // ];
+
+        (bytes32 secondHash, bytes32 secondRootHash) = keystore.updateKey(
+            0,
+            bytes32(0xd07902618ebcddf72757caeaa3856c3f84207fc70993c252a4b4a0a9b6e8fa0e),
+            bytes32(0xd17ad691459a0b570a2ac9a039a56a74dd0c5597b11b793b17991b123db576ad),
+            bytes32(0x6fc4e292df09c8fe0e4ada2e390bd1736ff287e9bbd4e013275676490910b19a),
+            bytes32(0xcc91b473d1d747edcc6455265f693c21f4605c982b1480a03f20b2358b059eca),
+            proofs,
+            positions,
+            27,
+            bytes32(0x262b33ddcae1c8772ee936d2f1f8e43ae9ea517f564c1cd4fb92bae5403ac4e6),
+            bytes32(0x1d23d386f867bbb7dfb08582c3ac3623047edd75c9c6cd568fbd399538872bd9)
+        );
     }
 }
