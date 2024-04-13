@@ -3,7 +3,7 @@ pragma solidity ^0.8.25;
 
 contract Keystore {
     bytes32 public root;
-    bytes32[8] public leaves;
+    bytes32[64] public leaves;
     uint256 public nextFreeSlot = 0;
 
     constructor(bytes32 _root) {
@@ -54,7 +54,7 @@ contract Keystore {
         public
         returns (bytes32, bytes32)
     {
-        require(nextFreeSlot < 8, "No more space");
+        require(nextFreeSlot < 64, "No more space");
         bytes32 currentLeaf = computeLeaf(nextFreeSlot, bytes32(0), bytes32(0));
         require(verify(currentLeaf, proofs, positions), "Invalid proofs");
         bytes32 newLeaf = computeLeaf(nextFreeSlot, newPubKeyX, newPubKeyY);
@@ -78,7 +78,7 @@ contract Keystore {
         bytes32 r,
         bytes32 s
     ) public returns (bytes32, bytes32) {
-        require(index < 8, "Index out of bound");
+        require(index < 64, "Index out of bound");
         bytes32 leaf = leaves[index];
         require(verify(leaf, proofs, positions), "Invalid proofs");
         bytes32 currentLeaf = computeLeaf(index, currentPubKeyX, currentPubKeyY);
