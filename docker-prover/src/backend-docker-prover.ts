@@ -35,7 +35,7 @@ export class DockerProverStack extends Stack {
         cpu: '256',
         memoryMiB: '1024',
         runtimePlatform: {
-          cpuArchitecture: aws_ecs.CpuArchitecture.ARM64,
+          cpuArchitecture: aws_ecs.CpuArchitecture.X86_64,
           operatingSystemFamily: aws_ecs.OperatingSystemFamily.LINUX,
         },
         compatibility: aws_ecs.Compatibility.FARGATE,
