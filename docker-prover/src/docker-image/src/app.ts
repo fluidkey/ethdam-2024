@@ -33,7 +33,7 @@ async function generateProofAndReadFile(): Promise<string> {
 app.post('/zk-proof', async (req: Request, res: Response) => {
   try {
     const {
-      // proofs_position,
+      proofs_position,
       proofs,
       merkle_state_root,
       ks_index,
@@ -45,7 +45,7 @@ app.post('/zk-proof', async (req: Request, res: Response) => {
       stealth_secret,
     } = req.body;
     console.log(req.body);
-    // assert(proofs_position, 'proofs_position is required');
+    assert(proofs_position, 'proofs_position is required');
     assert(!!proofs, 'proofs is required');
     assert(!!merkle_state_root, 'merkle_state_root is required');
     assert(!!ks_index, 'ks_index is required');
@@ -57,12 +57,13 @@ app.post('/zk-proof', async (req: Request, res: Response) => {
     assert(!!stealth_secret, 'stealth_secret is required');
     // create the Prover.toml file in circuit/src/ folder
     const proverToml = `proofs = ${JSON.stringify(proofs)}\n` +
-      `merkle_state_root = ${JSON.stringify(merkle_state_root)}\n`+
-      `ks_index = ${JSON.stringify(ks_index)}\n`+
-      `stealth_init = ${JSON.stringify(stealth_init)}\n`+
+      `proofs_position = ${JSON.stringify(proofs_position)}\n` +
+      `merkle_state_root = ${JSON.stringify(merkle_state_root)}\n` +
+      `ks_index = ${JSON.stringify(ks_index)}\n` +
+      `stealth_init = ${JSON.stringify(stealth_init)}\n` +
       `signature = ${JSON.stringify(signature)}\n` +
       `pub_key_y = ${JSON.stringify(pub_key_y)}\n` +
-      `pub_key_x = ${JSON.stringify(pub_key_x)}\n`+
+      `pub_key_x = ${JSON.stringify(pub_key_x)}\n` +
       `hashed_message = ${JSON.stringify(hashed_message)}\n` +
       `stealth_secret = ${JSON.stringify(stealth_secret)}\n`;
     writeFileSync('src/circuit/Prover.toml', proverToml, {
@@ -72,7 +73,7 @@ app.post('/zk-proof', async (req: Request, res: Response) => {
     return res.status(201).send({
       proof: zkProof,
     });
-  } catch ( e ) {
+  } catch (e) {
     console.error(e);
     return res.status(400).send({ errorMessage: 'Generic error' });
   }
