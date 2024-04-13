@@ -15,7 +15,7 @@ app.get('/api/health-check', (req: Request, res: Response) => {
 
 async function generateProofAndReadFile(): Promise<string> {
   return new Promise((resolve, reject) => {
-    exec('cd src/circuit && nargo prove', (error, stdout, stderr) => {
+    exec('cd src/circuit && /root/.nargo/bin/nargo prove', (error, stdout, stderr) => {
       if (error) {
         console.error(`exec error: ${error}`);
         reject(error);
