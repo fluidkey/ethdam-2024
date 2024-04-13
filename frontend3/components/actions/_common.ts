@@ -26,9 +26,10 @@ export const generateMerkleTree = (leaves: `0x${string}`[]): MerkleTree => {
 }
 
 /**
- * Receive the list of leaves representing the hash of the public key, and returnes the real list of leaves as
- * keccak(pubKeyHash, index) to start computing the merkle tree
- * @param leavePubKeyHash
+ * Receive the list of leaves representing on chain, and returnes the real list of leaves as
+ * keccak(pubKeyHash, index) to start computing the merkle tree. If the onChainLeaves is 0x00, means we have
+ * to compute also the pubKeyHash, otherwise it's already ready to be returned. On chian leaves are already keccak(pubKeyHash, index)
+ * @param onChainLeaves
  */
 export const generateLeaves = (onChainLeaves: `0x${string}`[]): `0x${string}`[] => {
   return onChainLeaves.map((lonc, pos) => {
