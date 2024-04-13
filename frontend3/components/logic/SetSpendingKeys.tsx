@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { registerNewKey } from "../actions/registerNewKey";
 import { useMain } from "../context/main";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
@@ -13,15 +14,29 @@ export default function SetSpendingKeys(): React.ReactElement {
   // Find the selected key object
   const selectedKeyObject = keys.find(key => key.publicKey === selectedKey);
 
-  const setKeyInKeystore = () => {
-    const newKeys = keys.map(key => {
+  // Check if any of the keys is set
+  const isAnyKeySet = keys.some(key => key.isSet);
+  console.log(isAnyKeySet);
+
+  const setKeyInKeystore = async () => {
+    const newKeys = await Promise.all(keys.map(async key => {
       if (key.publicKey === selectedKey) {
+        if (!isAnyKeySet) {
+          const index = await registerNewKey(key.privateKey as `0x${string}`)
+            .catch((error) => {
+              console.error(error);
+              key.isSet = false;
+              return;
+            });
+          if (index)
+          key.index = index.toString();
+        }
         key.isSet = true;
       } else {
         key.isSet = false;
       }
       return key;
-    });
+    }));
     localStorage.setItem('keys', JSON.stringify(newKeys));
     setKeys(newKeys);
   }
@@ -63,7 +78,7 @@ export default function SetSpendingKeys(): React.ReactElement {
             </SelectContent>
           </Select>
           <div className="text-center ml-3">
-            <Button className="bg-slate-500 hover:bg-slate-400" disabled={keys.length === 0} onClick={setKeyInKeystore}>
+            <Button className="bg-slate-500 hover:bg-slate-400" disabled={keys.length === 0 || selectedKeyObject?.isSet} onClick={setKeyInKeystore}>
               Set keys
             </Button>
           </div>
