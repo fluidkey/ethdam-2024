@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.25;
 
-import {console} from "forge-std/Test.sol";
-
 contract Keystore {
     bytes32 public root;
     bytes32[8] public leaves;
@@ -13,20 +11,27 @@ contract Keystore {
     }
 
     // !!!! also pass the index so the order is correct
-    function verify(bytes32 leaf, bytes32[] memory proof) public view returns (bool) {
+    function verify(bytes32 leaf, bytes32[] memory proof, uint8[] memory position) public view returns (bool) {
         bytes32 computedHash = keccak256(abi.encodePacked(leaf));
         for (uint256 i = 0; i < proof.length; i++) {
-            computedHash = keccak256(abi.encodePacked(computedHash, proof[i]));
+            if (position[i] == 0) {
+                computedHash = keccak256(abi.encodePacked(proof[i], computedHash));
+            } else {
+                computedHash = keccak256(abi.encodePacked(computedHash, proof[i]));
+            }
         }
         return (computedHash == root);
     }
 
     // allow to update a leaf if it is bytes32(0)
-    function addKey(bytes32[] memory proof, bytes32 newPubKeyX, bytes32 newPubKeyY) public returns (bytes32, bytes32) {
+    function addKey(bytes32[] memory proof, uint8[] memory position, bytes32 newPubKeyX, bytes32 newPubKeyY)
+        public
+        returns (bytes32, bytes32)
+    {
         // verify the proofs are valid
         require(nextAvailableIndex < 8, "No more space");
         bytes32 nextAvailableKey = computeLeaf(nextAvailableIndex, bytes32(0), bytes32(0));
-        require(verify(nextAvailableKey, proof), "Invalid proof");
+        require(verify(nextAvailableKey, proof, position), "Invalid proof");
         // compute the hash of the new public key
         bytes32 newKey = computeLeaf(nextAvailableIndex, newPubKeyX, newPubKeyY);
         leaves[nextAvailableIndex] = newKey;
@@ -34,7 +39,11 @@ contract Keystore {
         // compute the new root hash
         bytes32 rootHash = keccak256(abi.encodePacked(newKey));
         for (uint256 i = 0; i < proof.length; i++) {
-            rootHash = keccak256(abi.encodePacked(rootHash, proof[i]));
+            if (position[i] == 0) {
+                rootHash = keccak256(abi.encodePacked(proof[i], rootHash));
+            } else {
+                rootHash = keccak256(abi.encodePacked(rootHash, proof[i]));
+            }
         }
         root = rootHash;
         return (newKey, rootHash);
@@ -62,6 +71,7 @@ contract Keystore {
         bytes32 newPubKeyX,
         bytes32 newPubKeyY,
         bytes32[] memory proof,
+        uint8[] memory position,
         uint8 v,
         bytes32 r,
         bytes32 s
@@ -69,27 +79,26 @@ contract Keystore {
         // verify the proofs are valid
         require(index < 8, "Index out of bound");
         bytes32 leaf = leaves[index];
-        require(verify(leaf, proof), "Invalid proof");
+        require(verify(leaf, proof, position), "Invalid proof");
         // check that the leaf corresponds to currentPubKey
         bytes32 currentLeaf = computeLeaf(index, currentPubKeyX, currentPubKeyY);
         require(leaf == currentLeaf, "Invalid current public key");
         // check that the signature is valid
         bytes32 message = keccak256(abi.encodePacked(index, newPubKeyX, newPubKeyY));
-        console.logBytes32(message);
         address currentAddress = publicKeyToAddress(currentPubKeyX, currentPubKeyY);
-        console.logAddress(currentAddress);
-        console.logBytes32(r);
-        console.logBytes32(s);
         address recoveredAddress = ecrecover(message, v, r, s);
-        console.logAddress(recoveredAddress);
         require(currentAddress == recoveredAddress, "Invalid signature");
         // compute the hash of the new public key
         bytes32 newLeaf = computeLeaf(index, newPubKeyX, newPubKeyY);
         leaves[index] = newLeaf;
         // compute the new root hash
         bytes32 rootHash = keccak256(abi.encodePacked(newLeaf));
-        for (uint256 i = 0; i < 8; i++) {
-            rootHash = keccak256(abi.encodePacked(rootHash, proof[i]));
+        for (uint256 i = 0; i < proof.length; i++) {
+            if (position[i] == 0) {
+                rootHash = keccak256(abi.encodePacked(proof[i], rootHash));
+            } else {
+                rootHash = keccak256(abi.encodePacked(rootHash, proof[i]));
+            }
         }
         root = rootHash;
         return (newLeaf, rootHash);
