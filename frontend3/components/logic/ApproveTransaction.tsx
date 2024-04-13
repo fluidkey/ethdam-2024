@@ -8,7 +8,7 @@ import { Input } from "../ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 
 export default function SetSpendingKeys(): React.ReactElement {
-  const { keys, setKeys } = useMain();
+  const { stealthAccounts } = useMain();
   const [selectedKey, setSelectedKey] = useState<string>("Select a stealth account");
 
   return(
@@ -30,15 +30,14 @@ export default function SetSpendingKeys(): React.ReactElement {
               </SelectValue>
             </SelectTrigger>
             <SelectContent>
-              {keys.filter(key => key.isSet).map(key => (
-                key.stealthAccounts.map((account, index) => (
-                  <SelectItem value={account} key={index}>
-                    {account.substring(0, 10) + '...' + account.substring(account.length - 8)}
-                  </SelectItem>
-                ))
+              {stealthAccounts.map(stealthAccount => (
+                <SelectItem value={stealthAccount.address} key={stealthAccount.address}>
+                  {stealthAccount.address.substring(0, 10) + '...' + stealthAccount.address.substring(stealthAccount.address.length - 8)}
+                </SelectItem>
               ))}
             </SelectContent>
           </Select>
+          <Input placeholder="to" className="mt-2" type="string" />
           <div className="flex flex-row items-center justify-between w-full">
             <Input placeholder="ETH amount" className="mt-2" type="number" />
             <Button className="bg-slate-500 hover:bg-slate-400 mt-2 ml-2">

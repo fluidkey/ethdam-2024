@@ -1,12 +1,20 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
+import { generateStealthZkSafe } from "../actions/generateStealthZkSafe";
 import { useMain } from "../context/main";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
 
 export default function GenerateStealthAccounts(): React.ReactElement {
-  const { keys } = useMain();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { stealthAccounts, index, setStealthAccounts } = useMain();
+  const deployStealthAccount = async () => {
+    setIsLoading(true);
+    const { randomSecret, safeAddress } = await generateStealthZkSafe(parseInt(index as string));
+    setStealthAccounts(prevStealthAccounts => [...prevStealthAccounts, { address: safeAddress, randomSecret }]);
+    setIsLoading(false);
+  };
   return (
     <Card className="flex flex-col align-middle justify-center mt-12 w-96 min-w-32 mx-10">
       <CardHeader>
@@ -19,22 +27,18 @@ export default function GenerateStealthAccounts(): React.ReactElement {
       </CardHeader>
       <CardContent>
         <div className="text-center">
-          <Button className="bg-slate-500 hover:bg-slate-400" disabled={
-            keys.filter(key => key.isSet).length === 0
-          }>
+          <Button className="bg-slate-500 hover:bg-slate-400" disabled={index === undefined || isLoading} onClick={deployStealthAccount}>
             Deploy
           </Button>
         </div>
        <div className="flex flex-col items-center justify-center mt-2">
-        {keys.filter(key => key.isSet).map(key => (
-          <div key={key.publicKey} className="flex flex-col items-center justify-center mt-2">
-            {key.stealthAccounts.map((account, index) => (
+        {stealthAccounts.map(stealthAccount => (
+          <div key={stealthAccount.address} className="flex flex-col items-center justify-center mt-2">
               <div key={index} className="flex items-center justify-center mt-1">
-                <a href="https://example.com" className="font-mono font-bold text-teal-700 hover:text-teal-500 underline">
-                  {account.substring(0, 6) + '...' + account.substring(account.length - 4)}
+                <a href={`https://basescan.org/address/${stealthAccount.address}`} target="_blank" className="font-mono font-bold text-teal-700 hover:text-teal-500 underline">
+                  {stealthAccount.address.substring(0, 6) + '...' + stealthAccount.address.substring(stealthAccount.address.length - 4)}
                 </a>
               </div>
-            ))}
           </div>
         ))}
       </div>
