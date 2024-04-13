@@ -5,6 +5,7 @@ contract Keystore {
     bytes32 public root;
     bytes32[] public leaves;
     uint256 public nextAvailableIndex = 0;
+    uint256 public constant MAX_LEAFS = 64;
 
     constructor(bytes32 _root, bytes32[] memory _leaves) {
         root = _root;
@@ -22,7 +23,7 @@ contract Keystore {
     // allow to update a leaf if it is bytes32(0)
     function addKey(bytes32[] memory proof, bytes32 newPubKeyX, bytes32 newPubKeyY) public returns (bytes32, bytes32) {
         // verify the proofs are valid
-        require(nextAvailableIndex < 8, "No more space");
+        require(nextAvailableIndex < MAX_LEAFS, "No more space");
         require(verify(leaves[nextAvailableIndex], proof), "Invalid proof");
         // compute the hash of the new public key
         bytes32 newPubKeyHash = keccak256(abi.encodePacked(newPubKeyX, newPubKeyY));
