@@ -15,7 +15,9 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "viem": "^2.8.12",
-    "wagmi": "^2.5.11"
+    "wagmi": "^2.5.11",
+    "@noir-lang/backend_barretenberg": "^0.27.0",
+    "@noir-lang/noir_js": "^0.27.0"
   },
   "devDependencies": {
     "@types/node": "^18.19.3",
