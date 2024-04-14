@@ -1,6 +1,10 @@
 {
   "dependencies": [
     {
+      "name": "@types/cors",
+      "type": "build"
+    },
+    {
       "name": "@types/express",
       "version": "4.17.21",
       "type": "build"
@@ -80,6 +84,10 @@
     {
       "name": "body-parser",
       "version": "1.20.2",
+      "type": "runtime"
+    },
+    {
+      "name": "cors",
       "type": "runtime"
     },
     {
