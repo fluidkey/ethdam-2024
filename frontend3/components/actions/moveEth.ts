@@ -1,4 +1,4 @@
-import { concat, hashTypedData, keccak256, pad, toBytes, toHex } from 'viem';
+import { concat, fromHex, hashTypedData, keccak256, pad, toBytes, toHex } from 'viem';
 import { SafeABI } from '@/components/actions/constants/ABI/SafeABI';
 import { createViemPublicClient, generateLeaves, generateMerkleTree } from '@/components/actions/_common';
 import { KEYSTORE } from '@/components/actions/constants/contractAddress';
@@ -78,20 +78,20 @@ export const moveEth = async (params: {
     p => '0x' + p.data.toString('hex')
   );
   const proofPosition = leafPathProofs.map(p =>
-    ('0x' + (p.position === 'left' ? 0 : 1))
+    ((p.position === 'left' ? 0 : 1))
   );
 
   // prepare the zkProof data
   const zkProofData = {
-    "hashed_message": toBytes(hashMessage).map(p => p),
-    "pub_key_x": toBytes(pubKeyX),
-    "pub_key_y": toBytes(pubKeyY),
-    "signature": signWithNoble,
-    "stealth_init": toBytes(pad(stealthInit, {size: 32})),
-    "stealth_secret": toBytes(pad(randomSecret, {size: 32})),
-    "ks_index": toBytes(toHex(keyStoreIndex, {size: 32})),
-    "merkle_state_root": toBytes(root, {size: 32}),
-    "proofs": proofs.map(p => toBytes(p, {size: 32})),
+    "hashed_message": Array.from(toBytes(hashMessage)),
+    "pub_key_x": Array.from(toBytes(pubKeyX)),
+    "pub_key_y": Array.from(toBytes(pubKeyY)),
+    "signature": Array.from(signWithNoble),
+    "stealth_init": Array.from(toBytes(pad(stealthInit, {size: 32}))),
+    "stealth_secret": Array.from(toBytes(pad(randomSecret, {size: 32}))),
+    "ks_index": Array.from(toBytes(toHex(keyStoreIndex, {size: 32}))),
+    "merkle_state_root": Array.from(toBytes(root, {size: 32})),
+    "proofs": proofs.map(p => Array.from(toBytes(p, {size: 32}))),
     "proofs_position": proofPosition
   };
 
@@ -99,6 +99,7 @@ export const moveEth = async (params: {
   const zkProofResponse = await axios.post(ZK_PROOF_GENERATOR, zkProofData);
 
   const zkProof = zkProofResponse.data.proof;
+  console.log('proof', zkProof);
 
   // get the safe owner
   const owners = await client.readContract({
@@ -108,14 +109,13 @@ export const moveEth = async (params: {
   }) as `0x${string}`[];
   const owner = owners[0];
 
-
   // prepare the signature data for safe - like https://docs.safe.global/advanced/smart-account-signatures#contract-signature-eip-1271
-  const signature = concat([
-    pad(owner, {size: 32}),
-    toHex(65, {size: 32}),
-    '0x0',
-    toHex()
-  ]);
+  // const signature = concat([
+  //   pad(owner, {size: 32}),
+  //   toHex(65, {size: 32}),
+  //   '0x0',
+  //   toHex()
+  // ]);
 
   // encode the parameters for the function and call the relayer
 
