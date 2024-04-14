@@ -8,7 +8,7 @@ import {
   CardTitle
 } from "@/components/ui/card";
 import { getPublicKey } from "@noble/secp256k1";
-import React, { useEffect } from "react";
+import React from "react";
 import { toHex } from "viem";
 import { generatePrivateKey } from "viem/accounts";
 import { useMain } from "../context/main";
@@ -25,24 +25,14 @@ export default function GenerateKeys(): React.ReactElement {
     const color = hashToColor(publicKey);
     
     // add the keys to the keys array in the state
-    setKeys(prevKeys => [...prevKeys, {privateKey, publicKey, displayPubKey, color, isSet: false, stealthAccounts: ["0xbaeb5cfc8d9d851ce9a4764e9f414510f63f5b61df8cd22810e6037023d1feee"]}]);
-
-    // update the localStorage
-    localStorage.setItem('keys', JSON.stringify([...keys, {privateKey, publicKey, displayPubKey, color, isSet: false, stealthAccounts: []}]));
+    setKeys(prevKeys => [...prevKeys, {privateKey, publicKey, displayPubKey, color, isSet: false}]);
   }
 
   const deleteKey = (index: number) => {
     const newKeys = [...keys];
     newKeys.splice(index, 1);
     setKeys(newKeys);
-    localStorage.setItem('keys', JSON.stringify(newKeys));
   }
-
-  useEffect(() => {
-    if (localStorage.getItem('keys') != null) {
-      setKeys(JSON.parse(localStorage.getItem('keys') || '[]'));
-    }
-  }, [setKeys]);
 
   const hashToColor = (publicKey: string) => {
     let hash = 0;
@@ -69,16 +59,15 @@ export default function GenerateKeys(): React.ReactElement {
       </CardHeader>
       <CardContent>
         <div className="text-center">
-          <Button onClick={generateKeys} className="bg-slate-500 hover:bg-slate-400">
+          <Button onClick={generateKeys} className="bg-slate-500 hover:bg-slate-400" disabled={keys.length !== 0}>
             Generate keys
           </Button> 
         </div>
-        <div className="flex flex-col items-center justify-center mt-2">
+        <div className="flex flex-col items-left justify-left mt-2 ml-2">
           {keys.map((key, index) => (
-            <div key={index} className={index === 0 ? "mt-4" : ""} style={{ display: 'flex', alignItems: 'center' }}>
+            <div key={index} className={index === 0 ? "mt-4" : ""} style={{ display: 'flex', alignItems: 'left' }}>
               <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: hashToColor(key.publicKey), marginRight: '10px' }}></div>
               <p className="w-44 font-mono">{key.publicKey.substring(0, 6) + '...' + key.publicKey.substring(key.publicKey.length - 4)}</p>
-              <button className={key.isSet ? "ml-3 text-gray-200" : "ml-3"} disabled={key.isSet} onClick={() => deleteKey(index)}>X</button>
             </div>
           ))}
         </div>

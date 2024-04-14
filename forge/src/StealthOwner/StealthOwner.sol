@@ -17,13 +17,18 @@ contract StealthOwner is IERC1271, ERC165 {
         keystore = IKeystore(_keystore);
     }
 
+    function isValidSignature(bytes32 _hash, bytes memory _signature) public view override returns (bytes4) {
+        return 0xffffffff;
+    }
+
     /**
     * @dev Returns the magic value "0x1626ba7e" when the signature is valid and "0xffffffff" when it is invalid
-    * @param _hash Hash of the data to be signed
+    * @param _data bytes32 of the data to be hashed and then signed
     * @param _signature The zk proof
     **/
-    function isValidSignature(bytes32 _hash, bytes memory _signature) public view override returns (bytes4) {
+    function isValidSignature(bytes memory _data, bytes memory _signature) public view returns (bytes4) {
         bytes32 _root = keystore.root();
+        bytes32 _hash = keccak256(_data);
         bytes32[] memory _publicInputs = new bytes32[](96);
         bytes32[] memory _hashSplit = splitBytes32(_hash);
         bytes32[] memory _stealthInitSplit = splitBytes32(stealthInit);
@@ -34,7 +39,7 @@ contract StealthOwner is IERC1271, ERC165 {
             _publicInputs[i + (64)] = _rootSplit[i];
         }
         if (verifier.verify(_signature, _publicInputs)) {
-            return 0x1626ba7e;
+            return 0x20c13b0b;
         } else {
             return 0xffffffff;  // Return value for invalid signature
         }
