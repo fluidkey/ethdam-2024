@@ -13,13 +13,12 @@ export default function SetSpendingKeys(): React.ReactElement {
   const [selectedKey, setSelectedKey] = useState<string>("Select a stealth account");
   const [to, setTo] = useState<`0x${string}`>("0x");
   const [amount, setAmount] = useState<number>(0);
+  const [transactionHash, setTransactionHash] = useState<string>("");
 
-  console.log(amount, to, selectedKey)
 
   const executeTransaction = async () => {
     // Execute the transaction
-    console.log("starting")
-    await moveEth({
+    const txHash = await moveEth({
       fromSafeAddress: selectedKey as `0x${string}`,
       amount: BigInt(amount),
       to,
@@ -27,6 +26,7 @@ export default function SetSpendingKeys(): React.ReactElement {
       randomSecret: stealthAccounts.find(account => account.address === selectedKey)?.randomSecret as `0x${string}`,
       keyStoreIndex: parseInt(index as string),
     });
+    setTransactionHash(txHash);
   }
 
   return(
@@ -61,6 +61,13 @@ export default function SetSpendingKeys(): React.ReactElement {
             <Button className="bg-slate-500 hover:bg-slate-400 mt-2 ml-2" onClick={executeTransaction}>
               Send
             </Button>
+          </div>
+          <div className="mt-2">
+            {transactionHash !== "" ? (
+              <a href={`https://basescan.org/tx/${transactionHash}`} target="_blank" className="font-bold text-teal-700 hover:text-teal-500">
+                Transaction successful ✅
+              </a>
+            ) : null}
           </div>
         </div>
       </CardContent>
