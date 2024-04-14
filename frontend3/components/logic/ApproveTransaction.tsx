@@ -9,18 +9,23 @@ import { Input } from "../ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 
 export default function SetSpendingKeys(): React.ReactElement {
-  const { stealthAccounts } = useMain();
+  const { stealthAccounts, keys, index } = useMain();
   const [selectedKey, setSelectedKey] = useState<string>("Select a stealth account");
+  const [to, setTo] = useState<`0x${string}`>("0x");
+  const [amount, setAmount] = useState<number>(0);
+
+  console.log(amount, to, selectedKey)
 
   const executeTransaction = async () => {
     // Execute the transaction
+    console.log("starting")
     await moveEth({
-      fromSafeAddress: "0xdC9387877C1D893b21A7511002d5688E2DC36CD0",
-      amount: BigInt(0),
-      to: "0x9Cb5433d5C5BDdc5C480103F06f03dB13b36b7C9",
-      privateKey: "0x97b20c8f3877e08a74fde564f7d1300a59ba18dadb1f78808a705af75730e192",
-      randomSecret: "0xcf0c7fc6b084a98b2647036f4cf1c12e05d4c8e96d35f1fb6d82ab690fad2f06",
-      keyStoreIndex: 9,
+      fromSafeAddress: selectedKey as `0x${string}`,
+      amount: BigInt(amount),
+      to,
+      privateKey: keys[0].privateKey as `0x${string}`,
+      randomSecret: stealthAccounts.find(account => account.address === selectedKey)?.randomSecret as `0x${string}`,
+      keyStoreIndex: parseInt(index as string),
     });
   }
 
@@ -50,9 +55,9 @@ export default function SetSpendingKeys(): React.ReactElement {
               ))}
             </SelectContent>
           </Select>
-          <Input placeholder="to" className="mt-2" type="string" />
+          <Input placeholder="to" className="mt-2" type="string" value={to} onChange={e => setTo(e.target.value as `0x${string}`)} />
           <div className="flex flex-row items-center justify-between w-full">
-            <Input placeholder="ETH amount" className="mt-2" type="number" />
+            <Input placeholder="ETH amount" className="mt-2" type="number" value={amount} onChange={e => setAmount(Number(e.target.value))} />
             <Button className="bg-slate-500 hover:bg-slate-400 mt-2 ml-2" onClick={executeTransaction}>
               Send
             </Button>
