@@ -10,8 +10,10 @@ const project = new typescript.TypeScriptAppProject({
     '@aws-sdk/client-firehose@3.523.0',
     'express@4.19.2',
     'body-parser@1.20.2',
+    'cors',
   ],
   devDeps: [
+    '@types/cors',
     '@types/express@4.17.21',
   ],
   // deps: [],                /* Runtime dependencies of this module. */

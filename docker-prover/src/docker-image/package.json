@@ -18,6 +18,7 @@
     "projen": "npx projen"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.17",
     "@types/express": "4.17.21",
     "@types/jest": "^29.5.12",
     "@types/node": "^18",
@@ -38,6 +39,7 @@
     "@aws-sdk/client-firehose": "3.523.0",
     "@aws-sdk/client-s3": "3.523.0",
     "body-parser": "1.20.2",
+    "cors": "^2.8.5",
     "express": "4.19.2"
   },
   "license": "Apache-2.0",

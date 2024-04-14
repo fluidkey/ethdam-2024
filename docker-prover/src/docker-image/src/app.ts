@@ -4,11 +4,18 @@ import { exec } from 'node:child_process';
 import { writeFileSync } from 'node:fs';
 import bodyParser from 'body-parser';
 import express, { Request, Response } from 'express';
+import cors from 'cors';
 
 const app = express();
 const port = 8080;
 
 app.use(bodyParser.json({ limit: '100mb' }));
+// Enable CORS for all routes
+app.use(cors({
+  allowedHeaders: ['*'],
+  origin: '*',
+}));
+
 app.get('/api/health-check', (req: Request, res: Response) => {
   res.send(`OK, ${req.path}`);
 });
