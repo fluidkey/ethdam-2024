@@ -110,12 +110,14 @@ export const moveEth = async (params: {
   const owner = owners[0];
 
   // prepare the signature data for safe - like https://docs.safe.global/advanced/smart-account-signatures#contract-signature-eip-1271
-  // const signature = concat([
-  //   pad(owner, {size: 32}),
-  //   toHex(65, {size: 32}),
-  //   '0x0',
-  //   toHex()
-  // ]);
+  const signature = concat([
+    pad(owner, {size: 32}),
+    toHex(65, {size: 32}),
+    '0x0',
+    toHex(toBytes(zkProof).length, {size: 32}),
+    zkProof
+  ]);
+  console.log('signature', signature);
 
   // encode the parameters for the function and call the relayer
 
