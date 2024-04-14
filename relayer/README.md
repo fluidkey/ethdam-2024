@@ -16,7 +16,7 @@ The response of the endpoint is the following:
 ```json
 {
   "txHash": "0x...", // the txHash published on-chain
-  "receipt": "the receipt received after the tx has been included in the chain" 
+  "stealthSafeAddress": "0x" // stealth safe address, if any has been created 
 }
 ```
 # Development
