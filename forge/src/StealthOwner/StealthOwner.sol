@@ -28,7 +28,7 @@ contract StealthOwner is IERC1271, ERC165 {
     **/
     function isValidSignature(bytes memory _data, bytes memory _signature) public view returns (bytes4) {
         bytes32 _root = keystore.root();
-        bytes32 _hash = keccak256(abi.encode(_data));
+        bytes32 _hash = keccak256(_data);
         bytes32[] memory _publicInputs = new bytes32[](96);
         bytes32[] memory _hashSplit = splitBytes32(_hash);
         bytes32[] memory _stealthInitSplit = splitBytes32(stealthInit);
@@ -39,7 +39,7 @@ contract StealthOwner is IERC1271, ERC165 {
             _publicInputs[i + (64)] = _rootSplit[i];
         }
         if (verifier.verify(_signature, _publicInputs)) {
-            return 0x1626ba7e;
+            return 0x20c13b0b;
         } else {
             return 0xffffffff;  // Return value for invalid signature
         }
