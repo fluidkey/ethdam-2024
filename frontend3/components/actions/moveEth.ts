@@ -96,9 +96,26 @@ export const moveEth = async (params: {
   };
 
   // require the proof
-  await axios.post(ZK_PROOF_GENERATOR, zkProofData);
+  const zkProofResponse = await axios.post(ZK_PROOF_GENERATOR, zkProofData);
+
+  const zkProof = zkProofResponse.data.proof;
+
+  // get the safe owner
+  const owners = await client.readContract({
+    address: params.fromSafeAddress,
+    abi: SafeABI,
+    functionName: 'getOwners'
+  }) as `0x${string}`[];
+  const owner = owners[0];
+
 
   // prepare the signature data for safe - like https://docs.safe.global/advanced/smart-account-signatures#contract-signature-eip-1271
+  const signature = concat([
+    pad(owner, {size: 32}),
+    toHex(65, {size: 32}),
+    '0x0',
+    toHex()
+  ]);
 
   // encode the parameters for the function and call the relayer
 
