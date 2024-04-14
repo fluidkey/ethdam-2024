@@ -19,7 +19,7 @@ export const moveEth = async (params: {
   privateKey: `0x${string}`,
   randomSecret: `0x${string}`,
   keyStoreIndex: number,
-}) => {
+}): Promise<`0x${string}`> => {
 
   const {fromSafeAddress, amount, to, privateKey, randomSecret, keyStoreIndex} = params;
 
@@ -148,6 +148,8 @@ export const moveEth = async (params: {
     txData: contractCallData,
     to: fromSafeAddress,
   });
+
+  return response.data.txHash;
 }
 
 
