@@ -1,29 +1,43 @@
 "use client";
 
 import React, { useState } from "react";
+import { registerNewKey } from "../actions/registerNewKey";
 import { useMain } from "../context/main";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 
 export default function SetSpendingKeys(): React.ReactElement {
-  const { keys, setKeys } = useMain();
+  const { keys, setKeys, index, setIndex } = useMain();
   const [selectedKey, setSelectedKey] = useState<string>("Select a key to set");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   // Find the selected key object
   const selectedKeyObject = keys.find(key => key.publicKey === selectedKey);
 
-  const setKeyInKeystore = () => {
-    const newKeys = keys.map(key => {
+  const setKeyInKeystore = async () => {
+    setIsLoading(true);
+    const newKeys = await Promise.all(keys.map(async key => {
       if (key.publicKey === selectedKey) {
+        if (index === undefined) {
+          const response = await registerNewKey(key.privateKey as `0x${string}`)
+            .catch((error) => {
+              console.error(error);
+              key.isSet = false;
+              return;
+            });
+          if (response)
+          setIndex(response.toString());
+        }
         key.isSet = true;
       } else {
         key.isSet = false;
       }
       return key;
-    });
+    }));
     localStorage.setItem('keys', JSON.stringify(newKeys));
     setKeys(newKeys);
+    setIsLoading(false);
   }
 
   return(
@@ -63,7 +77,7 @@ export default function SetSpendingKeys(): React.ReactElement {
             </SelectContent>
           </Select>
           <div className="text-center ml-3">
-            <Button className="bg-slate-500 hover:bg-slate-400" disabled={keys.length === 0} onClick={setKeyInKeystore}>
+            <Button className="bg-slate-500 hover:bg-slate-400" disabled={keys.length === 0 || selectedKeyObject?.isSet || isLoading || selectedKeyObject === undefined} onClick={setKeyInKeystore}>
               Set keys
             </Button>
           </div>
