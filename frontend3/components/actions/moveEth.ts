@@ -1,12 +1,13 @@
-import { concat, fromHex, hashTypedData, keccak256, pad, toBytes, toHex } from 'viem';
+import { concat, encodeFunctionData, fromHex, hashTypedData, keccak256, pad, toBytes, toHex } from 'viem';
 import { SafeABI } from '@/components/actions/constants/ABI/SafeABI';
 import { createViemPublicClient, generateLeaves, generateMerkleTree } from '@/components/actions/_common';
-import { KEYSTORE } from '@/components/actions/constants/contractAddress';
+import { KEYSTORE, STEALTH_SAFE_FACTORY } from '@/components/actions/constants/contractAddress';
 import { KeystoreABI } from '@/components/actions/constants/ABI/KeystoreABI';
 import { privateKeyToAccount } from 'viem/accounts';
 import * as secp from '@noble/secp256k1';
 import axios from 'axios';
-import { ZK_PROOF_GENERATOR } from '@/components/actions/constants/backend';
+import { RELAYER, ZK_PROOF_GENERATOR } from '@/components/actions/constants/backend';
+import { StealthSafeFactoryABI } from '@/components/actions/constants/ABI/StealthSafeFactoryABI';
 
 /**
  * Function to move ETH
@@ -39,6 +40,8 @@ export const moveEth = async (params: {
     data: '0x00',
     to: to,
   });
+
+  console.log('hashMessage', hashMessage);
 
   // get the pub key
   const newAccount = privateKeyToAccount(privateKey);
@@ -110,17 +113,41 @@ export const moveEth = async (params: {
   const owner = owners[0];
 
   // prepare the signature data for safe - like https://docs.safe.global/advanced/smart-account-signatures#contract-signature-eip-1271
+  console.log('toBytes(zkProof).length', toBytes(zkProof).length);
+  console.log('toBytes(zkProof).length/2', toBytes(zkProof).length/2);
+  console.log('zkProof.length/2', zkProof.length/2);
   const signature = concat([
     pad(owner, {size: 32}),
     toHex(65, {size: 32}),
-    '0x0',
+    '0x00',
     toHex(toBytes(zkProof).length, {size: 32}),
     zkProof
   ]);
   console.log('signature', signature);
 
   // encode the parameters for the function and call the relayer
+  const contractCallData = encodeFunctionData({
+    abi: SafeABI,
+    functionName: 'execTransaction',
+    args: [
+      to,
+      amount,
+      '0x00',
+      0,0,0,0,
+      '0x0000000000000000000000000000000000000000',
+      '0x0000000000000000000000000000000000000000',
+      signature
+    ]
+  });
+  console.log('contractCallData', {
+    txData: contractCallData,
+    to: fromSafeAddress,
+  });
 
+  const response = await axios.post(RELAYER, {
+    txData: contractCallData,
+    to: fromSafeAddress,
+  });
 }
 
 

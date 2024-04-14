@@ -15,12 +15,12 @@ export default function SetSpendingKeys(): React.ReactElement {
   const executeTransaction = async () => {
     // Execute the transaction
     await moveEth({
-      fromSafeAddress: "0xdC9387877C1D893b21A7511002d5688E2DC36CD0",
+      fromSafeAddress: "0xb20185cA73eA6c60fcAB0ec82fC4c07848293C4a",
       amount: BigInt(0),
       to: "0x9Cb5433d5C5BDdc5C480103F06f03dB13b36b7C9",
-      privateKey: "0x97b20c8f3877e08a74fde564f7d1300a59ba18dadb1f78808a705af75730e192",
-      randomSecret: "0xcf0c7fc6b084a98b2647036f4cf1c12e05d4c8e96d35f1fb6d82ab690fad2f06",
-      keyStoreIndex: 9,
+      privateKey: "0x1138394b4ff20aee06ef59c73c9cdf3557561e09c981b545d4977bfc2539766c",
+      randomSecret: "0x82ad52156253b49d02004c040bf060ff480770449ce66141e62a46be368ab924",
+      keyStoreIndex: 11,
     });
   }
 
