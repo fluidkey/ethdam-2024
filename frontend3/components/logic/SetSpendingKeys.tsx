@@ -6,6 +6,7 @@ import { useMain } from "../context/main";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { updateKey } from '@/components/actions/updateKey';
 
 export default function SetSpendingKeys(): React.ReactElement {
   const { keys, setKeys, index, setIndex } = useMain();
@@ -17,24 +18,76 @@ export default function SetSpendingKeys(): React.ReactElement {
 
   const setKeyInKeystore = async () => {
     setIsLoading(true);
-    const newKeys = await Promise.all(keys.map(async key => {
+
+    // set the key if underfined
+    if (index === undefined) {
+      const response = await registerNewKey(selectedKeyObject?.privateKey as `0x${string}`)
+        .catch((error) => {
+          console.error(error);
+          return;
+        });
+      if (response)
+      setIndex(response.toString());
+    } else {
+      const oldKey = keys.find(key => key.isSet);
+      const newKey = selectedKeyObject;
+      if (!oldKey || !index || oldKey.privateKey === newKey?.privateKey || !newKey){
+        throw new Error('Old and index must be set');
+      }
+      const response = await updateKey(
+        oldKey.privateKey as `0x${string}`,
+        newKey.privateKey as `0x${string}`,
+        parseInt(index),
+      )
+        .catch((error) => {
+          console.error(error);
+          return;
+        });
+    }
+    const newKeys = keys.map(key => {
       if (key.publicKey === selectedKey) {
-        if (index === undefined) {
-          const response = await registerNewKey(key.privateKey as `0x${string}`)
-            .catch((error) => {
-              console.error(error);
-              key.isSet = false;
-              return;
-            });
-          if (response)
-          setIndex(response.toString());
-        }
         key.isSet = true;
       } else {
         key.isSet = false;
       }
       return key;
-    }));
+    });
+    //
+    // const newKeys = await Promise.all(keys.map(async key => {
+    //   if (key.publicKey === selectedKey) {
+    //     if (index === undefined) {
+    //       const response = await registerNewKey(key.privateKey as `0x${string}`)
+    //         .catch((error) => {
+    //           console.error(error);
+    //           key.isSet = false;
+    //           return;
+    //         });
+    //       if (response)
+    //       setIndex(response.toString());
+    //     } else {
+    //       const oldKey = keys.find(key => key.isSet);
+    //       const newKey = key;
+    //       console.log('oldKeyList', oldKey, index, newKey);
+    //       if (!oldKey || !index) {
+    //         throw new Error('Old and index must be set');
+    //       }
+    //       const response = await updateKey(
+    //         oldKey.privateKey as `0x${string}`,
+    //         newKey.privateKey as `0x${string}`,
+    //         parseInt(index),
+    //       )
+    //         .catch((error) => {
+    //           console.error(error);
+    //           key.isSet = false;
+    //           return;
+    //         });
+    //     }
+    //     key.isSet = true;
+    //   } else {
+    //     key.isSet = false;
+    //   }
+    //   return key;
+    // }));
     localStorage.setItem('keys', JSON.stringify(newKeys));
     setKeys(newKeys);
     setIsLoading(false);

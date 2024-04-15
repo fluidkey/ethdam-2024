@@ -23,7 +23,7 @@ export default function GenerateKeys(): React.ReactElement {
     const publicKey = toHex(getPublicKey(privateKey.slice(2), false));
     const displayPubKey = publicKey.substring(0, 6) + '...' + publicKey.substring(publicKey.length - 4);
     const color = hashToColor(publicKey);
-    
+
     // add the keys to the keys array in the state
     setKeys(prevKeys => [...prevKeys, {privateKey, publicKey, displayPubKey, color, isSet: false}]);
   }
@@ -59,9 +59,9 @@ export default function GenerateKeys(): React.ReactElement {
       </CardHeader>
       <CardContent>
         <div className="text-center">
-          <Button onClick={generateKeys} className="bg-slate-500 hover:bg-slate-400" disabled={keys.length !== 0}>
+          <Button onClick={generateKeys} className="bg-slate-500 hover:bg-slate-400">
             Generate keys
-          </Button> 
+          </Button>
         </div>
         <div className="flex flex-col items-left justify-left mt-2 ml-2">
           {keys.map((key, index) => (

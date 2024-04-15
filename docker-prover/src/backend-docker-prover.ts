@@ -86,7 +86,7 @@ export class DockerProverStack extends Stack {
         serviceName: 'docker-prover-service',
         cluster: ecsCluster,
         taskDefinition: taskDefinition,
-        desiredCount: 1,
+        desiredCount: 0,
         platformVersion: aws_ecs.FargatePlatformVersion.LATEST,
         assignPublicIp: true,
         minHealthyPercent: 100,
